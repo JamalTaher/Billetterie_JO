@@ -10,7 +10,7 @@ Encore
         resolveUrlLoader: false
     })
     .autoProvidejQuery() // Si vous avez besoin de jQuery pour certains plugins Bootstrap
-    .enableIntegrityAlgorithms()
+    .enableIntegrityHashes()
     .enableSingleRuntimeChunk()
 ;
 
