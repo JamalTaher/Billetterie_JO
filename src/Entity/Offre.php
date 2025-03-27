@@ -27,9 +27,10 @@ class Offre
     #[ORM\Column]
     private ?int $capacite = null;
 
-    /**
-     * @var Collection<int, Commande>
-     */
+    #[ORM\ManyToOne(targetEntity: Evenement::class, inversedBy: 'offres')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Evenement $evenement = null;
+
     #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'offre')]
     private Collection $commandes;
 
@@ -87,6 +88,18 @@ class Offre
     public function setCapacite(int $capacite): static
     {
         $this->capacite = $capacite;
+
+        return $this;
+    }
+
+    public function getEvenement(): ?Evenement
+    {
+        return $this->evenement;
+    }
+
+    public function setEvenement(?Evenement $evenement): static
+    {
+        $this->evenement = $evenement;
 
         return $this;
     }

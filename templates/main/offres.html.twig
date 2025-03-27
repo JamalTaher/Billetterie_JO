@@ -7,12 +7,28 @@
         <h1>Toutes nos offres disponibles</h1>
         <p>Choisissez l'offre qui vous convient pour vivre l'expérience des Jeux Olympiques.</p>
 
+        {{ form_start(categoryForm) }}
+            <div class="mb-3">
+                {{ form_label(categoryForm.categorie, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(categoryForm.categorie, {'attr': {'class': 'form-select'}}) }}
+                {{ form_errors(categoryForm.categorie) }}
+            </div>
+            <button type="submit" class="btn btn-primary mb-3">Filtrer par catégorie</button>
+        {{ form_end(categoryForm) }}
+
+        <hr class="mb-4">
+
         <div class="row">
             {% for offre in offres %}
                 <div class="col-md-4 mb-3">
-                    <div class="card">
+                    <div class="card h-100">
                         <div class="card-body">
                             <h5 class="card-title">{{ offre.nom }}</h5>
+                            {% if offre.evenement %}
+                                <h6 class="card-subtitle mb-2 text-muted">{{ offre.evenement.categorie }} - {{ offre.evenement.nom }}</h6>
+                            {% else %}
+                                <h6 class="card-subtitle mb-2 text-muted">Événement non spécifié</h6>
+                            {% endif %}
                             <p class="card-text">{{ offre.description|default('Pas de description pour le moment.') }}</p>
                             <p class="card-text">Prix : {{ offre.prix }} €</p>
                             <p class="card-text">Capacité : {{ offre.capacite }} personne{{ offre.capacite > 1 ? 's' : '' }}</p>
