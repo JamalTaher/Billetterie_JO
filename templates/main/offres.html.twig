@@ -32,7 +32,7 @@
                             <p class="card-text">{{ offre.description|default('Pas de description pour le moment.') }}</p>
                             <p class="card-text">Prix : {{ offre.prix }} €</p>
                             <p class="card-text">Capacité : {{ offre.capacite }} personne{{ offre.capacite > 1 ? 's' : '' }}</p>
-                            <button class="btn btn-success">Ajouter au panier</button>
+                            <button class="btn btn-success" data-offre-id="{{ offre.id }}">Ajouter au panier</button>
                         </div>
                     </div>
                 </div>
