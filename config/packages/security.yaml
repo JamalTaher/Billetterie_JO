@@ -19,13 +19,12 @@ security:
             pattern: ^/
             provider: app_user_provider
             logout:
-                path: app_deconnexion
+                 path: /logout
             form_login:
                 login_path: /login
                 check_path: /login # The route name that the login form submits to
-                # Ajoutez ces lignes si vous voulez personnaliser le nom des paramètres
-                # username_parameter: your_custom_username_field
-                # password_parameter: your_custom_password_field
+                username_parameter: email   # Correspond à name="email" dans le formulaire
+                password_parameter: password # Correspond à name="password" dans le formulaire
             # custom_authenticator: App\Security\LoginFormAuthenticator
             # where to redirect after logout
             # target: app_any_route

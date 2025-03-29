@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Page d'administration</h1>
+        <p>Bienvenue dans l'interface d'administration.</p>
+
+        <div class="list-group mb-3">
+            <a href="{{ path('admin_evenements_index') }}" class="list-group-item list-group-item-action">
+                Gestion des Événements
+            </a>
+            <a href="{{ path('admin_offres_index') }}" class="list-group-item list-group-item-action">
+                Gestion des Offres
+            </a>
+            {# <a href="{{ path('admin_categories_index') }}" class="list-group-item list-group-item-action">
+                Gestion des Catégories
+            </a> #}
+            <a href="{{ path('admin_types_offres_index') }}" class="list-group-item list-group-item-action">
+                Gestion des Types d'Offres
+            </a>
+        </div>
+
+        {% block body_content %}{% endblock %}
+    </div>
+{% endblock %}
