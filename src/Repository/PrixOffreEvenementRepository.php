@@ -2,18 +2,18 @@
 
 namespace App\Repository;
 
-use App\Entity\Commande;
+use App\Entity\PrixOffreEvenement;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Commande>
+ * @extends ServiceEntityRepository<PrixOffreEvenement>
  */
-class CommandeRepository extends ServiceEntityRepository
+class PrixOffreEvenementRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Commande::class);
+        parent::__construct($registry, PrixOffreEvenement::class);
     }
 
     

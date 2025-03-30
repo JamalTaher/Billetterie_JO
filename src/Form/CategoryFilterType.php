@@ -39,14 +39,14 @@ class CategoryFilterType extends AbstractType
                 'required' => false,
                 'placeholder' => false,
             ])
-            // Nous retirons l'ajout explicite du bouton submit
+            
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'method' => 'GET', // Important pour que les filtres apparaissent dans l'URL
+            'method' => 'GET', 
         ]);
     }
 }

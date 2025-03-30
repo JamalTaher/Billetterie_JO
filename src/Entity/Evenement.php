@@ -31,12 +31,12 @@ class Evenement
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\OneToMany(mappedBy: 'evenement', targetEntity: Offre::class, cascade: ['persist', 'remove'])]
-    private Collection $offres;
+    #[ORM\OneToMany(mappedBy: 'evenement', targetEntity: PrixOffreEvenement::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $prixOffreEvenements;
 
     public function __construct()
     {
-        $this->offres = new ArrayCollection();
+        $this->prixOffreEvenements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -105,29 +105,29 @@ class Evenement
     }
 
     /**
-     * @return Collection<int, Offre>
+     * @return Collection<int, PrixOffreEvenement>
      */
-    public function getOffres(): Collection
+    public function getPrixOffreEvenements(): Collection
     {
-        return $this->offres;
+        return $this->prixOffreEvenements;
     }
 
-    public function addOffre(Offre $offre): static
+    public function addPrixOffreEvenement(PrixOffreEvenement $prixOffreEvenement): static
     {
-        if (!$this->offres->contains($offre)) {
-            $this->offres->add($offre);
-            $offre->setEvenement($this);
+        if (!$this->prixOffreEvenements->contains($prixOffreEvenement)) {
+            $this->prixOffreEvenements->add($prixOffreEvenement);
+            $prixOffreEvenement->setEvenement($this);
         }
 
         return $this;
     }
 
-    public function removeOffre(Offre $offre): static
+    public function removePrixOffreEvenement(PrixOffreEvenement $prixOffreEvenement): static
     {
-        if ($this->offres->removeElement($offre)) {
-            // set the owning side to null (unless already changed)
-            if ($offre->getEvenement() === $this) {
-                $offre->setEvenement(null);
+        if ($this->prixOffreEvenements->removeElement($prixOffreEvenement)) {
+            
+            if ($prixOffreEvenement->getEvenement() === $this) {
+                $prixOffreEvenement->setEvenement(null);
             }
         }
 

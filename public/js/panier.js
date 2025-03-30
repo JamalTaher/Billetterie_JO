@@ -1,12 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const addToCartButtons = document.querySelectorAll('.card button[data-offre-id]');
+    const addToCartButtons = document.querySelectorAll('.card button[data-offre-id][data-evenement-id]');
+    const panierCountElement = document.getElementById('panier-count'); // Récupérer l'élément du compteur
 
     addToCartButtons.forEach(button => {
         button.addEventListener('click', function() {
             const offreId = this.getAttribute('data-offre-id');
-            console.log('Offre ajoutée au panier avec l\'ID:', offreId);
+            const evenementId = this.getAttribute('data-evenement-id');
 
-            fetch('/panier/ajouter/' + offreId, {
+            fetch(`/panier/ajouter/${offreId}/${evenementId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -17,7 +18,10 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 if (data.success) {
                     alert('Offre ajoutée au panier !');
-                    // Ici, vous pourriez mettre à jour l'affichage du panier dans la barre de navigation
+                  
+                    if (panierCountElement) {
+                        panierCountElement.textContent = data.panierCount;
+                    }
                 } else {
                     alert('Erreur lors de l\'ajout au panier.');
                     console.error(data.message);

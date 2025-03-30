@@ -5,7 +5,7 @@
 {% block body %}
     <div class="container mt-4">
         <h1>Toutes nos offres disponibles</h1>
-        <p>Choisissez l'offre qui vous convient pour vivre l'expérience des Jeux Olympiques.</p>
+        <p>Choisissez l'offre et l'événement qui vous conviennent pour vivre l'expérience des Jeux Olympiques.</p>
 
         {{ form_start(categoryForm) }}
             <div class="mb-3">
@@ -20,23 +20,21 @@
 
         <div class="row">
             {% for offre in offres %}
-                <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ offre.nom }}</h5>
-                            {% if offre.evenement %}
-                                <h6 class="card-subtitle mb-2 text-muted">{{ offre.evenement.categorie }} - {{ offre.evenement.nom }}</h6>
-                            {% else %}
-                                <h6 class="card-subtitle mb-2 text-muted">Événement non spécifié</h6>
-                            {% endif %}
-                            <p class="card-text">{{ offre.description|default('Pas de description pour le moment.') }}</p>
-                            <p class="card-text">Prix : {{ offre.prix }} €</p>
-                            <p class="card-text">Capacité : {{ offre.capacite }} personne{{ offre.capacite > 1 ? 's' : '' }}</p>
-                            <button class="btn btn-success" data-offre-id="{{ offre.id }}">Ajouter au panier</button>
+                {% for prixOffreEvenement in offre.prixOffreEvenements %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ offre.nom }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ prixOffreEvenement.evenement.categorie }} - {{ prixOffreEvenement.evenement.nom }}</h6>
+                                <p class="card-text">Prix : {{ prixOffreEvenement.prix }} €</p>
+                                <p class="card-text">{{ offre.description|default('Pas de description pour le moment.') }}</p>
+                                <p class="card-text">Capacité : {{ offre.capacite }} personne{{ offre.capacite > 1 ? 's' : '' }}</p>
+                                <button class="btn btn-success" data-offre-id="{{ offre.id }}" data-evenement-id="{{ prixOffreEvenement.evenement.id }}">Ajouter au panier</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                {% if loop.index % 3 == 0 %}</div><div class="row">{% endif %}
+                    {% if loop.parent.loop.index % 3 == 0 and loop.last == false %}</div><div class="row">{% endif %}
+                {% endfor %}
             {% endfor %}
         </div>
     </div>

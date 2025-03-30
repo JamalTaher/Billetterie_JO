@@ -17,23 +17,23 @@ class Commande
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, options: ['default' => 'CURRENT_TIMESTAMP'])]
     private ?\DateTimeImmutable $dateAchat = null;
 
-    #[ORM\Column(length: 255, unique: true)] // Assurez-vous que chaque clé d'achat est unique
+    #[ORM\Column(length: 255, unique: true)] 
     private ?string $cleAchat = null;
 
-    #[ORM\Column(length: 255, unique: true)] // Assurez-vous que chaque clé de billet est unique
+    #[ORM\Column(length: 255, unique: true)] 
     private ?string $cleBillet = null;
 
     #[ORM\ManyToOne(inversedBy: 'commandes')]
-    #[ORM\JoinColumn(nullable: false)] // Une commande doit toujours être liée à une offre
-    private ?Offre $offre = null;
+    #[ORM\JoinColumn(nullable: false)] 
+    private ?PrixOffreEvenement $prixOffreEvenement = null;
 
     #[ORM\ManyToOne(inversedBy: 'commandes')]
-    #[ORM\JoinColumn(nullable: false)] // Une commande doit toujours être liée à un utilisateur
+    #[ORM\JoinColumn(nullable: false)] 
     private ?Utilisateur $utilisateur = null;
 
     public function __construct()
     {
-        $this->dateAchat = new \DateTimeImmutable(); // Initialisation par défaut lors de la création
+        $this->dateAchat = new \DateTimeImmutable(); 
     }
 
     public function getId(): ?int
@@ -77,14 +77,14 @@ class Commande
         return $this;
     }
 
-    public function getOffre(): ?Offre
+    public function getPrixOffreEvenement(): ?PrixOffreEvenement
     {
-        return $this->offre;
+        return $this->prixOffreEvenement;
     }
 
-    public function setOffre(?Offre $offre): static
+    public function setPrixOffreEvenement(?PrixOffreEvenement $prixOffreEvenement): static
     {
-        $this->offre = $offre;
+        $this->prixOffreEvenement = $prixOffreEvenement;
 
         return $this;
     }
@@ -100,7 +100,4 @@ class Commande
 
         return $this;
     }
-
-    // La propriété $relation semble superflue, je l'ai supprimée.
-    // Si vous aviez une intention spécifique, veuillez me l'indiquer.
 }

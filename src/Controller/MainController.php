@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Evenement; // Ajout de cette ligne
 use App\Entity\Offre;
 use App\Form\CategoryFilterType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,9 +20,11 @@ class MainController extends AbstractController
     {
         $offres = $entityManager->getRepository(Offre::class)
             ->createQueryBuilder('o')
-            ->leftJoin('o.evenement', 'e')
+            ->leftJoin('o.prixOffreEvenements', 'poe')
+            ->addSelect('poe')
+            ->leftJoin('poe.evenement', 'e')
             ->addSelect('e')
-            ->setMaxResults(3) // Afficher seulement 3 offres sur la page d'accueil (exemple)
+            ->setMaxResults(3)
             ->getQuery()
             ->getResult();
 
@@ -39,7 +42,9 @@ class MainController extends AbstractController
 
         $queryBuilder = $entityManager->getRepository(Offre::class)
             ->createQueryBuilder('o')
-            ->leftJoin('o.evenement', 'e')
+            ->leftJoin('o.prixOffreEvenements', 'poe')
+            ->addSelect('poe')
+            ->leftJoin('poe.evenement', 'e')
             ->addSelect('e');
 
         if ($categorie) {
@@ -63,7 +68,9 @@ class MainController extends AbstractController
 
         $queryBuilder = $entityManager->getRepository(Offre::class)
             ->createQueryBuilder('o')
-            ->leftJoin('o.evenement', 'e')
+            ->leftJoin('o.prixOffreEvenements', 'poe')
+            ->addSelect('poe')
+            ->leftJoin('poe.evenement', 'e')
             ->addSelect('e');
 
         if ($categoryForm->isSubmitted() && $categoryForm->isValid()) {
@@ -81,26 +88,31 @@ class MainController extends AbstractController
         ]);
     }
 
-    #[Route('/panier/ajouter/{id}', name: 'app_panier_ajouter', methods: ['POST'], condition: 'request.isXmlHttpRequest()')]
-    public function ajouterAuPanier(int $id, EntityManagerInterface $entityManager, SessionInterface $session): Response
+    #[Route('/panier/ajouter/{offreId}/{evenementId}', name: 'app_panier_ajouter', methods: ['POST'], condition: 'request.isXmlHttpRequest()')]
+    public function ajouterAuPanier(int $offreId, int $evenementId, EntityManagerInterface $entityManager, SessionInterface $session): Response
     {
-        $offre = $entityManager->getRepository(Offre::class)->find($id);
+        $offre = $entityManager->getRepository(Offre::class)->find($offreId);
+        $evenement = $entityManager->getRepository(Evenement::class)->find($evenementId); // Modifié ici
 
-        if (!$offre) {
-            return new JsonResponse(['success' => false, 'message' => 'Offre non trouvée.']);
+        if (!$offre || !$evenement) {
+            return new JsonResponse(['success' => false, 'message' => 'Offre ou événement non trouvé.']);
         }
 
+        $panierKey = $offreId . '_' . $evenementId;
         $panier = $session->get('panier', []);
 
-        if (isset($panier[$offre->getId()])) {
-            $panier[$offre->getId()]++; // Si l'offre est déjà dans le panier, on augmente la quantité
+        if (isset($panier[$panierKey])) {
+            $panier[$panierKey]++;
         } else {
-            $panier[$offre->getId()] = 1; // Sinon, on l'ajoute avec une quantité de 1
+            $panier[$panierKey] = 1;
         }
 
         $session->set('panier', $panier);
 
-        return new JsonResponse(['success' => true, 'message' => 'Offre ajoutée au panier.']);
+      
+        $panierCount = array_sum($panier);
+
+        return new JsonResponse(['success' => true, 'message' => 'Offre ajoutée au panier.', 'panierCount' => $panierCount]); // Modifié ici
     }
 
     #[Route('/panier', name: 'app_panier_voir')]
@@ -110,14 +122,24 @@ class MainController extends AbstractController
         $panierAvecDetails = [];
         $total = 0;
 
-        foreach ($panier as $offreId => $quantite) {
+        foreach ($panier as $panierKey => $quantite) {
+            [$offreId, $evenementId] = explode('_', $panierKey);
             $offre = $entityManager->getRepository(Offre::class)->find($offreId);
-            if ($offre) {
-                $panierAvecDetails[] = [
-                    'offre' => $offre,
-                    'quantite' => $quantite,
-                ];
-                $total += $offre->getPrix() * $quantite;
+            $evenement = $entityManager->getRepository(Evenement::class)->find($evenementId); // Modifié ici
+
+            if ($offre && $evenement) {
+                $prixOffreEvenement = $entityManager->getRepository(\App\Entity\PrixOffreEvenement::class)
+                    ->findOneBy(['offre' => $offre, 'evenement' => $evenement]);
+
+                if ($prixOffreEvenement) {
+                    $panierAvecDetails[] = [
+                        'offre' => $offre,
+                        'evenement' => $evenement,
+                        'quantite' => $quantite,
+                        'prix' => $prixOffreEvenement->getPrix(),
+                    ];
+                    $total += $prixOffreEvenement->getPrix() * $quantite;
+                }
             }
         }
 

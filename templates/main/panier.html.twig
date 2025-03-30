@@ -21,10 +21,10 @@
             <tbody>
                 {% for item in panierAvecDetails %}
                     <tr>
-                        <td>{{ item.offre.nom }}</td>
-                        <td>{{ item.offre.prix }} €</td>
+                        <td>{{ item.offre.nom }} - {{ item.evenement.nom }}</td>
+                        <td>{{ item.prix }} €</td>
                         <td>{{ item.quantite }}</td>
-                        <td>{{ item.offre.prix * item.quantite }} €</td>
+                        <td>{{ item.prix * item.quantite }} €</td>
                         <td>
                             <button class="btn btn-danger btn-sm">Supprimer</button>
                         </td>

@@ -22,21 +22,18 @@ class Offre
     private ?string $description = null;
 
     #[ORM\Column]
-    private ?float $prix = null;
-
-    #[ORM\Column]
     private ?int $capacite = null;
-
-    #[ORM\ManyToOne(targetEntity: Evenement::class, inversedBy: 'offres')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Evenement $evenement = null;
 
     #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'offre')]
     private Collection $commandes;
 
+    #[ORM\OneToMany(mappedBy: 'offre', targetEntity: PrixOffreEvenement::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $prixOffreEvenements;
+
     public function __construct()
     {
         $this->commandes = new ArrayCollection();
+        $this->prixOffreEvenements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -68,18 +65,6 @@ class Offre
         return $this;
     }
 
-    public function getPrix(): ?float
-    {
-        return $this->prix;
-    }
-
-    public function setPrix(float $prix): static
-    {
-        $this->prix = $prix;
-
-        return $this;
-    }
-
     public function getCapacite(): ?int
     {
         return $this->capacite;
@@ -88,18 +73,6 @@ class Offre
     public function setCapacite(int $capacite): static
     {
         $this->capacite = $capacite;
-
-        return $this;
-    }
-
-    public function getEvenement(): ?Evenement
-    {
-        return $this->evenement;
-    }
-
-    public function setEvenement(?Evenement $evenement): static
-    {
-        $this->evenement = $evenement;
 
         return $this;
     }
@@ -128,6 +101,36 @@ class Offre
             // set the owning side to null (unless already changed)
             if ($commande->getOffre() === $this) {
                 $commande->setOffre(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PrixOffreEvenement>
+     */
+    public function getPrixOffreEvenements(): Collection
+    {
+        return $this->prixOffreEvenements;
+    }
+
+    public function addPrixOffreEvenement(PrixOffreEvenement $prixOffreEvenement): static
+    {
+        if (!$this->prixOffreEvenements->contains($prixOffreEvenement)) {
+            $this->prixOffreEvenements->add($prixOffreEvenement);
+            $prixOffreEvenement->setOffre($this);
+        }
+
+        return $this;
+    }
+
+    public function removePrixOffreEvenement(PrixOffreEvenement $prixOffreEvenement): static
+    {
+        if ($this->prixOffreEvenements->removeElement($prixOffreEvenement)) {
+            
+            if ($prixOffreEvenement->getOffre() === $this) {
+                $prixOffreEvenement->setOffre(null);
             }
         }
 

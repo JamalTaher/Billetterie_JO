@@ -126,7 +126,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
+        
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
@@ -144,8 +144,8 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        
+        
     }
 
     /**
@@ -177,7 +177,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeCommande(Commande $commande): static
     {
         if ($this->commandes->removeElement($commande)) {
-            // set the owning side to null (unless already changed)
+            
             if ($commande->getUtilisateur() === $this) {
                 $commande->setUtilisateur(null);
             }
