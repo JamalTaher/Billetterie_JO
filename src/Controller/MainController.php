@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Evenement; // Ajout de cette ligne
+use App\Entity\Evenement; 
 use App\Entity\Offre;
 use App\Form\CategoryFilterType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -109,10 +109,28 @@ class MainController extends AbstractController
 
         $session->set('panier', $panier);
 
-      
         $panierCount = array_sum($panier);
 
         return new JsonResponse(['success' => true, 'message' => 'Offre ajoutée au panier.', 'panierCount' => $panierCount]); // Modifié ici
+    }
+
+    #[Route('/panier/supprimer/{offreId}/{evenementId}', name: 'app_panier_supprimer', methods: ['POST'], condition: 'request.isXmlHttpRequest()')]
+    public function supprimerDuPanier(int $offreId, int $evenementId, SessionInterface $session): Response
+    {
+        $panierKey = $offreId . '_' . $evenementId;
+        $panier = $session->get('panier', []);
+
+        if (isset($panier[$panierKey])) {
+            unset($panier[$panierKey]); 
+            $session->set('panier', $panier);
+
+            
+            $panierCount = array_sum($panier);
+
+            return new JsonResponse(['success' => true, 'message' => 'Élément supprimé du panier.', 'panierCount' => $panierCount]);
+        } else {
+            return new JsonResponse(['success' => false, 'message' => 'L\'élément n\'a pas été trouvé dans le panier.']);
+        }
     }
 
     #[Route('/panier', name: 'app_panier_voir')]

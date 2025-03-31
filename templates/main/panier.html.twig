@@ -26,7 +26,11 @@
                         <td>{{ item.quantite }}</td>
                         <td>{{ item.prix * item.quantite }} €</td>
                         <td>
-                            <button class="btn btn-danger btn-sm">Supprimer</button>
+                            <button class="btn btn-danger btn-sm supprimer-panier-item"
+                                    data-offre-id="{{ item.offre.id }}"
+                                    data-evenement-id="{{ item.evenement.id }}">
+                                Supprimer
+                            </button>
                         </td>
                     </tr>
                 {% endfor %}

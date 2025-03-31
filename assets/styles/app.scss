@@ -1,2 +1,25 @@
 // assets/styles/app.scss
+$couleur-fond: #1f2945;
+$couleur-bordure-navbar: white;
+
 @import '~bootstrap/scss/bootstrap';
+
+body {
+    background-color: $couleur-fond;
+    color: white;
+}
+
+nav.navbar.bg-light {
+    background-color: $couleur-fond !important; 
+    border-bottom: 1px solid $couleur-bordure-navbar;
+}
+
+.navbar-brand {
+    color: white;
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link {
+    color: white;
+    font-weight: bold;
+}
