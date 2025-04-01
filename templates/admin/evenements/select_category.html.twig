@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Choisir une catégorie d'événements{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Choisir une catégorie d'événements</h1>
+
+        <ul class="list-group">
+            {% for cat in categories %}
+                <li class="list-group-item">
+                    <a href="{{ path('admin_evenement_by_category', {'category': cat.categorie}) }}">{{ cat.categorie }}</a>
+                </li>
+            {% else %}
+                <li class="list-group-item">Aucune catégorie trouvée.</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

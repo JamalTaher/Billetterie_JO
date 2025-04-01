@@ -77,9 +77,7 @@ class Offre
         return $this;
     }
 
-    /**
-     * @return Collection<int, Commande>
-     */
+  
     public function getCommandes(): Collection
     {
         return $this->commandes;
@@ -98,7 +96,7 @@ class Offre
     public function removeCommande(Commande $commande): static
     {
         if ($this->commandes->removeElement($commande)) {
-            // set the owning side to null (unless already changed)
+            
             if ($commande->getOffre() === $this) {
                 $commande->setOffre(null);
             }
@@ -107,9 +105,7 @@ class Offre
         return $this;
     }
 
-    /**
-     * @return Collection<int, PrixOffreEvenement>
-     */
+   
     public function getPrixOffreEvenements(): Collection
     {
         return $this->prixOffreEvenements;

@@ -1,0 +1,27 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Créer un nouvel événement{% endblock %}
+
+{% block body %}
+    <h1>Créer un nouvel événement</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.nom) }}
+        {{ form_row(form.categorie) }}
+        {{ form_row(form.date) }}
+        {{ form_row(form.lieu) }}
+        {{ form_row(form.description) }}
+
+        <h2>Prix et Offres</h2>
+        <ul class="prix-offres" data-prototype="{{ form_widget(form.prixOffreEvenements.vars.prototype)|e('html_attr') }}">
+            {% for prixOffreEvenementForm in form.prixOffreEvenements %}
+                <li>{{ form_row(prixOffreEvenementForm.offre) }} {{ form_row(prixOffreEvenementForm.prix) }} <button type="button" class="btn btn-danger btn-sm remove-prix-offre">Supprimer</button></li>
+            {% endfor %}
+        </ul>
+        {{ form_errors(form.prixOffreEvenements) }}
+
+        <button type="submit" class="btn btn-primary">Créer l'événement</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('admin_index') }}" class="btn btn-secondary mt-3">Retour à la liste des événements</a>
+{% endblock %}

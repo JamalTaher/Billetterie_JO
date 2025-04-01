@@ -48,9 +48,7 @@ class UtilisateurRepository extends ServiceEntityRepository implements PasswordU
         $this->save($user, true);
     }
 
-    /**
-     * @throws UserNotFoundException if not found
-     */
+   
     public function loadUserByIdentifier(string $identifier): ?UserInterface
     {
         $user = $this->findOneBy(['email' => $identifier]);

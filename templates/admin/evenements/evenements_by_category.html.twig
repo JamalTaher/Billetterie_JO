@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Événements de la catégorie {{ category }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Événements de la catégorie {{ category }}</h1>
+
+        <ul class="list-group">
+            {% for evenement in evenements %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ evenement.nom }}
+                    <div>
+                        <a href="{{ path('admin_evenement_edit', {'id': evenement.id}) }}" class="btn btn-primary btn-sm">Modifier</a>
+                        <a href="{{ path('admin_evenement_delete', {'id': evenement.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')">Supprimer</a>
+                    </div>
+                </li>
+            {% else %}
+                <li class="list-group-item">Aucun événement trouvé dans cette catégorie.</li>
+            {% endfor %}
+        </ul>
+
+        <a href="{{ path('admin_select_category') }}" class="btn btn-secondary mt-3">Retour aux catégories</a>
+    </div>
+{% endblock %}

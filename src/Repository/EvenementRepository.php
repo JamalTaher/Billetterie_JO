@@ -14,5 +14,34 @@ class EvenementRepository extends ServiceEntityRepository
         parent::__construct($registry, Evenement::class);
     }
 
-    
+    public function save(Evenement $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Evenement $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->remove($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+
+   
+    public function getAllCategories(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->select('DISTINCT e.categorie')
+            ->orderBy('e.categorie', 'ASC')
+            ->getQuery()
+            ->getScalarResult();
+    }
+
+
 }

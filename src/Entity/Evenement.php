@@ -104,9 +104,7 @@ class Evenement
         return $this;
     }
 
-    /**
-     * @return Collection<int, PrixOffreEvenement>
-     */
+   
     public function getPrixOffreEvenements(): Collection
     {
         return $this->prixOffreEvenements;
@@ -125,12 +123,21 @@ class Evenement
     public function removePrixOffreEvenement(PrixOffreEvenement $prixOffreEvenement): static
     {
         if ($this->prixOffreEvenements->removeElement($prixOffreEvenement)) {
-            
+            // set the owning side to null (unless already changed)
             if ($prixOffreEvenement->getEvenement() === $this) {
                 $prixOffreEvenement->setEvenement(null);
             }
         }
 
         return $this;
+    }
+
+    
+    public function createPrixOffreEvenement(): PrixOffreEvenement
+    {
+        $prixOffreEvenement = new PrixOffreEvenement();
+        $prixOffreEvenement->setEvenement($this);
+        $this->prixOffreEvenements->add($prixOffreEvenement);
+        return $prixOffreEvenement;
     }
 }

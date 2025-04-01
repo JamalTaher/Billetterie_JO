@@ -41,9 +41,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
-    /**
-     * @var Collection<int, Commande>
-     */
+    
     #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: Commande::class, cascade: ['persist', 'remove'])]
     private Collection $commandes;
 
@@ -93,9 +91,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
+    
     public function getPassword(): ?string
     {
         return $this->password;
@@ -120,13 +116,11 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
+    
     public function getRoles(): array
     {
         $roles = $this->roles;
-        
+
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
@@ -139,26 +133,20 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
+    
     public function eraseCredentials(): void
     {
-        
-        
+
+
     }
 
-    /**
-     * @see UserInterface
-     */
+   
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-    /**
-     * @return Collection<int, Commande>
-     */
+   
     public function getCommandes(): Collection
     {
         return $this->commandes;
@@ -177,7 +165,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeCommande(Commande $commande): static
     {
         if ($this->commandes->removeElement($commande)) {
-            
+
             if ($commande->getUtilisateur() === $this) {
                 $commande->setUtilisateur(null);
             }
