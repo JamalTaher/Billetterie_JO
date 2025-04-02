@@ -44,6 +44,8 @@
             </tfoot>
         </table>
 
-        <a href="#" class="btn btn-success">Passer à la caisse</a>
+        <form method="post" action="{{ path('app_panier_checkout') }}">
+    <button type="submit" class="btn btn-success">Passer à la caisse</button>
+</form>
     {% endif %}
 {% endblock %}

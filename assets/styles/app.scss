@@ -1,4 +1,4 @@
-// assets/styles/app.scss
+
 $couleur-fond: #1f2945;
 $couleur-bordure-navbar: white;
 
@@ -10,7 +10,7 @@ body {
 }
 
 nav.navbar.bg-light {
-    background-color: $couleur-fond !important; 
+    background-color: $couleur-fond !important;
     border-bottom: 1px solid $couleur-bordure-navbar;
 }
 
@@ -22,4 +22,72 @@ nav.navbar.bg-light {
 .navbar-nav .nav-link {
     color: white;
     font-weight: bold;
+}
+
+
+.form-container {
+    margin-bottom: 20px;
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: white;
+    color: #333;
+}
+
+
+.form-header {
+    background-color: #808080; 
+    color: white;
+    padding: 15px;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+.form-body {
+    background-color: #f0f0f0;
+    padding: 20px;
+}
+
+
+.form-body .form-label {
+    color: #333;
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+
+.form-body .form-control {
+    background-color: #e0e0e0;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 10px;
+    margin-bottom: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    color: #333;
+}
+
+
+.form-body button[type="submit"] {
+    background-color: #808080; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.form-body button[type="submit"]:hover {
+    background-color: #666666; 
+}
+
+
+.form-body .form-error {
+    color: #dc3545;
+    margin-top: 5px;
+    font-size: 0.9em;
 }

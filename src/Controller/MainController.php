@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
-use App\Entity\Evenement; 
+use App\Entity\Evenement;
 use App\Entity\Offre;
+use App\Entity\Commande;
+use App\Entity\PrixOffreEvenement;
+use App\Entity\Utilisateur;
 use App\Form\CategoryFilterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class MainController extends AbstractController
 {
@@ -92,7 +96,7 @@ class MainController extends AbstractController
     public function ajouterAuPanier(int $offreId, int $evenementId, EntityManagerInterface $entityManager, SessionInterface $session): Response
     {
         $offre = $entityManager->getRepository(Offre::class)->find($offreId);
-        $evenement = $entityManager->getRepository(Evenement::class)->find($evenementId); // Modifié ici
+        $evenement = $entityManager->getRepository(Evenement::class)->find($evenementId);
 
         if (!$offre || !$evenement) {
             return new JsonResponse(['success' => false, 'message' => 'Offre ou événement non trouvé.']);
@@ -111,7 +115,7 @@ class MainController extends AbstractController
 
         $panierCount = array_sum($panier);
 
-        return new JsonResponse(['success' => true, 'message' => 'Offre ajoutée au panier.', 'panierCount' => $panierCount]); // Modifié ici
+        return new JsonResponse(['success' => true, 'message' => 'Offre ajoutée au panier.', 'panierCount' => $panierCount]);
     }
 
     #[Route('/panier/supprimer/{offreId}/{evenementId}', name: 'app_panier_supprimer', methods: ['POST'], condition: 'request.isXmlHttpRequest()')]
@@ -121,10 +125,10 @@ class MainController extends AbstractController
         $panier = $session->get('panier', []);
 
         if (isset($panier[$panierKey])) {
-            unset($panier[$panierKey]); 
+            unset($panier[$panierKey]);
             $session->set('panier', $panier);
 
-            
+
             $panierCount = array_sum($panier);
 
             return new JsonResponse(['success' => true, 'message' => 'Élément supprimé du panier.', 'panierCount' => $panierCount]);
@@ -143,10 +147,10 @@ class MainController extends AbstractController
         foreach ($panier as $panierKey => $quantite) {
             [$offreId, $evenementId] = explode('_', $panierKey);
             $offre = $entityManager->getRepository(Offre::class)->find($offreId);
-            $evenement = $entityManager->getRepository(Evenement::class)->find($evenementId); // Modifié ici
+            $evenement = $entityManager->getRepository(Evenement::class)->find($evenementId);
 
             if ($offre && $evenement) {
-                $prixOffreEvenement = $entityManager->getRepository(\App\Entity\PrixOffreEvenement::class)
+                $prixOffreEvenement = $entityManager->getRepository(PrixOffreEvenement::class)
                     ->findOneBy(['offre' => $offre, 'evenement' => $evenement]);
 
                 if ($prixOffreEvenement) {
@@ -165,5 +169,100 @@ class MainController extends AbstractController
             'panierAvecDetails' => $panierAvecDetails,
             'total' => $total,
         ]);
+    }
+
+    #[Route('/panier/checkout', name: 'app_panier_checkout')]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function checkout(EntityManagerInterface $entityManager, SessionInterface $session): Response
+    {
+        $panier = $session->get('panier', []);
+        $panierAvecInfos = [];
+        $total = 0;
+
+        foreach ($panier as $panierKey => $quantite) {
+            [$offreId, $evenementId] = explode('_', $panierKey);
+            $offre = $entityManager->getRepository(Offre::class)->find($offreId);
+            $evenement = $entityManager->getRepository(Evenement::class)->find($evenementId);
+
+            if ($offre && $evenement) {
+                $prixOffreEvenement = $entityManager->getRepository(PrixOffreEvenement::class)
+                    ->findOneBy(['offre' => $offre, 'evenement' => $evenement]);
+
+                if ($prixOffreEvenement) {
+                    $panierAvecInfos[] = [
+                        'offre' => $offre,
+                        'evenement' => $evenement,
+                        'quantite' => $quantite,
+                        'prix' => $prixOffreEvenement->getPrix(),
+                        'total' => $prixOffreEvenement->getPrix() * $quantite,
+                    ];
+                    $total += $prixOffreEvenement->getPrix() * $quantite;
+                }
+            }
+        }
+
+        return $this->render('main/checkout.html.twig', [
+            'panierAvecInfos' => $panierAvecInfos,
+            'total' => $total,
+        ]);
+    }
+
+    #[Route('/panier/process_payment', name: 'app_panier_process_payment', methods: ['POST'])]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function processPayment(EntityManagerInterface $entityManager, SessionInterface $session): Response
+    {
+        $panier = $session->get('panier', []);
+        $utilisateur = $this->getUser();
+
+        if (!$utilisateur instanceof Utilisateur) {
+            $this->addFlash('error', 'Vous devez être connecté pour effectuer le paiement.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        $achats = [];
+
+        if (!empty($panier)) {
+            $userKey = $utilisateur->getCleUtilisateur();
+
+            foreach ($panier as $panierKey => $quantite) {
+                [$offreId, $evenementId] = explode('_', $panierKey);
+                $offre = $entityManager->getRepository(Offre::class)->find($offreId);
+                $evenement = $entityManager->getRepository(Evenement::class)->find($evenementId);
+                $prixOffreEvenement = $entityManager->getRepository(PrixOffreEvenement::class)
+                    ->findOneBy(['offre' => $offre, 'evenement' => $evenement]);
+
+                if ($offre && $evenement && $prixOffreEvenement) {
+                    for ($i = 0; $i < $quantite; $i++) {
+                        $purchaseKey = bin2hex(random_bytes(16));
+                        $finalTicketKey = $userKey . '-' . $purchaseKey;
+
+                        $commande = new Commande();
+                        $commande->setPrixOffreEvenement($prixOffreEvenement);
+                        $commande->setUtilisateur($utilisateur);
+                        $commande->setDateAchat(new \DateTimeImmutable());
+                        $commande->setCleAchat($purchaseKey);
+                        $commande->setCleBillet($finalTicketKey);
+
+                        $entityManager->persist($commande);
+                        $achats[] = $commande;
+                    }
+                }
+            }
+
+            $entityManager->flush();
+            $session->remove('panier');
+
+            if (!empty($achats)) {
+                return $this->render('main/payment_success.html.twig', [
+                    'achats' => $achats,
+                ]);
+            } else {
+                $this->addFlash('warning', 'Votre panier était vide lors de la tentative de paiement.');
+                return $this->redirectToRoute('app_panier_voir');
+            }
+        } else {
+            $this->addFlash('warning', 'Votre panier est vide.');
+            return $this->redirectToRoute('app_panier_voir');
+        }
     }
 }

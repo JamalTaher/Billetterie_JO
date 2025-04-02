@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement Réussi !{% endblock %}
+
+{% block body %}
+    <h1>Votre paiement a été effectué avec succès !</h1>
+
+    {% if achats|length > 0 %}
+        <p>Merci pour votre achat. Voici les détails de votre commande :</p>
+        <ul>
+            {% for achat in achats %}
+                <li>
+                    Billet pour : {{ achat.prixOffreEvenement.evenement.nom }} - {{ achat.prixOffreEvenement.offre.nom }}
+                    <br>
+                    Clé de billet : <strong>{{ achat.cleBillet }}</strong>
+                    <br>
+                    {% set qrCodeApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' ~ achat.cleBillet %}
+                    <img src="{{ qrCodeApiUrl }}" alt="QR Code Billet">
+                </li>
+            {% endfor %}
+        </ul>
+        <p>Veuillez présenter le QR Code de chaque billet lors de l'événement.</p>
+    {% else %}
+        <p>Aucun achat trouvé.</p>
+    {% endif %}
+
+    <a href="{{ path('app_home') }}">Retour à l'accueil</a>
+{% endblock %}

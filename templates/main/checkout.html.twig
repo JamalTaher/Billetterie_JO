@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Récapitulatif de votre commande{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Récapitulatif de votre commande</h1>
+
+        {% if panierAvecInfos|length > 0 %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Prix Unitaire</th>
+                        <th>Quantité</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in panierAvecInfos %}
+                        <tr>
+                            <td>{{ item.offre.nom }} - {{ item.evenement.nom }}</td>
+                            <td>{{ item.prix }} €</td>
+                            <td>{{ item.quantite }}</td>
+                            <td>{{ item.total }} €</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-right"><strong>Total :</strong></td>
+                        <td><strong>{{ total }} €</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <form method="post" action="{{ path('app_panier_process_payment') }}">
+                <button type="submit" class="btn btn-success">Simuler le Paiement</button>
+            </form>
+        {% else %}
+            <p>Votre panier est vide.</p>
+            <a href="{{ path('app_offres') }}" class="btn btn-primary">Retour aux offres</a>
+        {% endif %}
+    </div>
+{% endblock %}
