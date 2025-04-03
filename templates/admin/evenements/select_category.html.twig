@@ -1,22 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Choisir une catégorie d'événements{% endblock %}
+{% block title %}Administration - Sélectionner une catégorie{% endblock %}
 
 {% block body %}
-    <div class="form-container">
-        <div class="form-header">
-            <h1>Choisir une catégorie d'événements</h1>
+    <div class="container mt-4">
+        <h1>Administration</h1>
+
+        <div class="mb-3">
+            <a href="{{ path('admin_evenement_new') }}" class="btn btn-success">Créer un nouvel événement</a>
         </div>
-        <div class="form-body">
-            <ul class="list-group">
-                {% for cat in categories %}
-                    <li class="list-group-item">
-                        <a href="{{ path('admin_evenement_by_category', {'category': cat.categorie}) }}">{{ cat.categorie }}</a>
-                    </li>
-                {% else %}
-                    <li class="list-group-item">Aucune catégorie trouvée.</li>
-                {% endfor %}
-            </ul>
-        </div>
+
+        <h2>Sélectionner une catégorie d'événements</h2>
+
+        <ul class="list-group">
+            {% for category in categories %}
+                <li class="list-group-item">
+                    <a href="{{ path('admin_evenement_by_category', {'category': category}) }}">{{ category }}</a>
+                </li>
+            {% endfor %}
+        </ul>
     </div>
 {% endblock %}

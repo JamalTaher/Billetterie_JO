@@ -25,7 +25,10 @@ class AdminController extends AbstractController
     #[Route('/categories', name: 'select_category')]
     public function selectCategory(EvenementRepository $evenementRepository): Response
     {
-        $categories = $evenementRepository->getAllCategories();
+        $categoriesAssoc = $evenementRepository->getAllCategories();
+        $categories = array_map(function ($item) {
+            return $item['categorie'];
+        }, $categoriesAssoc);
 
         return $this->render('admin/evenements/select_category.html.twig', [
             'categories' => $categories,
@@ -42,6 +45,8 @@ class AdminController extends AbstractController
             'category' => $category,
         ]);
     }
+
+
 
     #[Route('/evenement/new', name: 'evenement_new')]
     public function newEvenement(Request $request, EntityManagerInterface $entityManager): Response

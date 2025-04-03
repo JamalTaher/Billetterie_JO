@@ -6,7 +6,6 @@ use App\Entity\Evenement;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-
 class EvenementRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -32,16 +31,13 @@ class EvenementRepository extends ServiceEntityRepository
         }
     }
 
-
-   
     public function getAllCategories(): array
     {
         return $this->createQueryBuilder('e')
-            ->select('DISTINCT e.categorie')
+            ->select('e.categorie')
+            ->distinct()
             ->orderBy('e.categorie', 'ASC')
             ->getQuery()
             ->getScalarResult();
     }
-
-
 }

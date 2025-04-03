@@ -1,27 +1,87 @@
-{% extends 'admin/base.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}Créer un nouvel événement{% endblock %}
 
 {% block body %}
-    <h1>Créer un nouvel événement</h1>
+    <div class="container mt-4">
+        <h1>Créer un nouvel événement</h1>
 
-    {{ form_start(form) }}
-        {{ form_row(form.nom) }}
-        {{ form_row(form.categorie) }}
-        {{ form_row(form.date) }}
-        {{ form_row(form.lieu) }}
-        {{ form_row(form.description) }}
+        {{ form_start(form) }}
+            {{ form_row(form.nom) }}
+            {{ form_row(form.categorie) }}
+            {{ form_row(form.date) }}
+            {{ form_row(form.lieu) }}
+            {{ form_row(form.description) }}
 
-        <h2>Prix et Offres</h2>
-        <ul class="prix-offres" data-prototype="{{ form_widget(form.prixOffreEvenements.vars.prototype)|e('html_attr') }}">
-            {% for prixOffreEvenementForm in form.prixOffreEvenements %}
-                <li>{{ form_row(prixOffreEvenementForm.offre) }} {{ form_row(prixOffreEvenementForm.prix) }} <button type="button" class="btn btn-danger btn-sm remove-prix-offre">Supprimer</button></li>
-            {% endfor %}
-        </ul>
-        {{ form_errors(form.prixOffreEvenements) }}
+            <h2>Prix et Offres</h2>
+            <ul class="prix-offres" data-prototype="{{ form_widget(form.prixOffreEvenements.vars.prototype)|e('html_attr') }}">
+                {% for prixOffreEvenementForm in form.prixOffreEvenements %}
+                    <li>
+                        {{ form_row(prixOffreEvenementForm.offre) }}
+                        {{ form_row(prixOffreEvenementForm.prix) }}
+                        <button type="button" class="btn btn-danger btn-sm remove-prix-offre">Supprimer</button>
+                    </li>
+                {% endfor %}
+            </ul>
+            {{ form_errors(form.prixOffreEvenements) }}
 
-        <button type="submit" class="btn btn-primary">Créer l'événement</button>
-    {{ form_end(form) }}
+            <div class="mt-3">
+                <button type="button" class="btn btn-info mr-2" id="add-prix-offre" data-list=".prix-offres">Ajouter un Prix/Offre</button>
+                <button type="submit" class="btn btn-primary" id="create-event">Créer l'événement</button>
+            </div>
 
-    <a href="{{ path('admin_index') }}" class="btn btn-secondary mt-3">Retour à la liste des événements</a>
+        {{ form_end(form) }}
+
+        <a href="{{ path('admin_select_category') }}" class="btn btn-secondary mt-3">Retour à la liste des événements</a>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const addPrixOffreButton = document.getElementById('add-prix-offre');
+            const prixOffresList = document.querySelector('.prix-offres');
+
+            prixOffresList.querySelectorAll('.remove-prix-offre').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.closest('li').remove();
+                });
+            });
+
+            addPrixOffreButton.addEventListener('click', function() {
+                const prototype = prixOffresList.dataset.prototype;
+                const index = prixOffresList.children.length;
+                const newForm = prototype.replace(/__name__/g, index);
+                const newLi = document.createElement('li');
+                newLi.innerHTML = newForm + ' <button type="button" class="btn btn-danger btn-sm remove-prix-offre">Supprimer</button>';
+                prixOffresList.appendChild(newLi);
+                newLi.querySelector('.remove-prix-offre').addEventListener('click', function() {
+                    this.closest('li').remove();
+                });
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        #add-prix-offre, #create-event {
+            min-width: 150px; /* Ajustez la largeur minimale si nécessaire */
+            padding: 0.5rem 1rem; /* Ajustez le padding pour la taille */
+            font-size: 1rem; /* Ajustez la taille de la police si nécessaire */
+        }
+
+        #add-prix-offre {
+            background-color: #007bff; /* Couleur bleue Bootstrap pour correspondre à "Créer l'événement" par défaut */
+            border-color: #007bff;
+            color: white;
+        }
+
+        #add-prix-offre:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+    </style>
 {% endblock %}
