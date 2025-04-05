@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html style="height: 100%;"> <!- Ajout du style inline ici -->
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Welcome!{% endblock %}</title>
@@ -9,12 +9,12 @@
         {{ encore_entry_link_tags('app') }}
         <style>
             .footer-small-text {
-                font-size: 0.9rem; 
+                font-size: 0.9rem;
             }
         </style>
     {% endblock %}
 </head>
-<body>
+<body style="display: flex; flex-direction: column; min-height: 100vh; margin: 0;"> <!- Ajout des styles inline ici -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="{{ path('app_home') }}">Accueil</a>
@@ -64,7 +64,7 @@
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <div class="container mt-4" style="flex-grow: 1;"> <!- Ajout du style inline ici -->
         {% block body %}{% endblock %}
     </div>
 
@@ -73,24 +73,20 @@
             <div class="row">
                 <div class="col-md-4">
                     <h5>Jeux Olympiques de Paris 2024</h5>
-
                     <p>Organisateur: Comité d'Organisation des Jeux Olympiques de Paris 2024 </p>
                 </div>
                 <div class="col-md-4">
                     <h5>Contact</h5>
                     <p>Email: support@jo2024-simulation.com</p>
-
                 </div>
                 <div class="col-md-4">
                     <h5>Informations Utiles</h5>
                     <ul class="list-unstyled">
-                       
                         <li style="color: white;">CGV (Simulation)</li>
                         <li style="color: white;">Politique de Confidentialité (Simulation)</li>
                     </ul>
                 </div>
             </div>
-
         </div>
     </footer>
 

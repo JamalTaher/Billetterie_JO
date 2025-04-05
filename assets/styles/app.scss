@@ -1,12 +1,21 @@
+// assets/styles/app.scss
 
 $couleur-fond: #1f2945;
 $couleur-bordure-navbar: white;
 
 @import '~bootstrap/scss/bootstrap';
 
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
 body {
-    background-color: $couleur-fond;
+    background-color: $couleur-fond; /* Rétablissement de la couleur de fond */
     color: white;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Alternative à height: 100% pour le body */
 }
 
 nav.navbar.bg-light {
@@ -36,7 +45,7 @@ nav.navbar.bg-light {
 
 
 .form-header {
-    background-color: #808080; 
+    background-color: #808080;
     color: white;
     padding: 15px;
     font-size: 1.2em;
@@ -72,7 +81,7 @@ nav.navbar.bg-light {
 
 
 .form-body button[type="submit"] {
-    background-color: #808080; 
+    background-color: #808080;
     color: white;
     border: none;
     border-radius: 5px;
@@ -82,7 +91,7 @@ nav.navbar.bg-light {
 }
 
 .form-body button[type="submit"]:hover {
-    background-color: #666666; 
+    background-color: #666666;
 }
 
 
@@ -90,4 +99,14 @@ nav.navbar.bg-light {
     color: #dc3545;
     margin-top: 5px;
     font-size: 0.9em;
+}
+
+.container.mt-4 {
+    flex-grow: 1; /* Permet au container principal de grandir */
+}
+
+footer {
+    flex-shrink: 0; /* Empêche le footer de rétrécir */
+    background-color: #1f2945; /* Assurez-vous que la couleur est bien définie ici aussi (redondant mais sûr) */
+    color: white;
 }
