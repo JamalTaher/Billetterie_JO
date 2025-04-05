@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Evenement;
 use App\Form\Admin\EvenementType;
+use App\Repository\CommandeRepository;
 use App\Repository\EvenementRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,6 +17,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 #[IsGranted('ROLE_ADMIN')]
 class AdminController extends AbstractController
 {
+    public function __construct(private CommandeRepository $commandeRepository)
+    {
+    }
+
     #[Route('/', name: 'index')]
     public function index(): Response
     {
@@ -45,8 +50,6 @@ class AdminController extends AbstractController
             'category' => $category,
         ]);
     }
-
-
 
     #[Route('/evenement/new', name: 'evenement_new')]
     public function newEvenement(Request $request, EntityManagerInterface $entityManager): Response
@@ -100,5 +103,15 @@ class AdminController extends AbstractController
         $this->addFlash('success', 'L\'événement a été supprimé avec succès.');
 
         return $this->redirectToRoute('admin_select_category');
+    }
+
+    #[Route('/stats', name: 'stats_index')]
+    public function statsIndex(): Response
+    {
+        $ventesParEvenement = $this->commandeRepository->getVentesParEvenementAvecTotal();
+
+        return $this->render('admin/stats/index.html.twig', [
+            'ventesParEvenement' => $ventesParEvenement,
+        ]);
     }
 }

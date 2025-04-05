@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques des Ventes{% endblock %}
+
+{% block body %}
+    <h1>Statistiques des Ventes</h1>
+
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Ventes par Événement</h2>
+            {% if ventesParEvenement is not empty %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Événement</th>
+                            <th>Nombre de Ventes</th>
+                            <th>Montant Total des Ventes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vente in ventesParEvenement %}
+                            <tr>
+                                <td>{{ vente.evenement_nom }}</td>
+                                <td>{{ vente.nombre_ventes }}</td>
+                                <td>{{ vente.montant_total|number_format(2, ',', ' ') }} €</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Aucune vente enregistrée pour le moment.</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

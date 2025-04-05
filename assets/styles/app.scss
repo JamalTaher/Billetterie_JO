@@ -11,11 +11,11 @@ html, body {
 }
 
 body {
-    background-color: $couleur-fond; /* Rétablissement de la couleur de fond */
+    background-color: $couleur-fond; 
     color: white;
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Alternative à height: 100% pour le body */
+    min-height: 100vh; 
 }
 
 nav.navbar.bg-light {
@@ -102,11 +102,11 @@ nav.navbar.bg-light {
 }
 
 .container.mt-4 {
-    flex-grow: 1; /* Permet au container principal de grandir */
+    flex-grow: 1; 
 }
 
 footer {
-    flex-shrink: 0; /* Empêche le footer de rétrécir */
-    background-color: #1f2945; /* Assurez-vous que la couleur est bien définie ici aussi (redondant mais sûr) */
+    flex-shrink: 0; 
+    background-color: #1f2945; 
     color: white;
 }
