@@ -38,12 +38,23 @@ class ProfileController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $plainPassword = $form->get('plainPassword')->getData();
+
+            // Si un nouveau mot de passe a été soumis, on le hashe et on met à jour l'utilisateur
+            if ($plainPassword) {
+                $hashedPassword = $this->passwordHasher->hashPassword(
+                    $user,
+                    $plainPassword
+                );
+                $user->setPassword($hashedPassword);
+            }
+
             $this->entityManager->flush();
             $this->addFlash('success', 'Vos informations personnelles ont été mises à jour avec succès.');
 
             return $this->redirectToRoute('app_profile_index');
         }
-
+      
         return $this->render('profile/edit.html.twig', [
             'form' => $form->createView(),
         ]);
@@ -60,7 +71,7 @@ class ProfileController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $plainPassword = $form->get('plainPassword')->getData();
 
-            
+            // Hacher le nouveau mot de passe
             $hashedPassword = $this->passwordHasher->hashPassword(
                 $user,
                 $plainPassword
@@ -70,7 +81,7 @@ class ProfileController extends AbstractController
             $this->entityManager->flush();
             $this->addFlash('success', 'Votre mot de passe a été modifié avec succès.');
 
-            return $this->redirectToRoute('app_profile_index');
+            // NE PLUS REDIRIGER ICI. Le JavaScript s'en chargera.
         }
 
         return $this->render('profile/change_password.html.twig', [

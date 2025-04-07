@@ -42,6 +42,15 @@
                                 {{ form_errors(registrationForm.plainPassword.second) }}
                             </div>
 
+                            {# Affichage des erreurs pour le champ plainPassword (le champ principal avec les contraintes) #}
+                            {% if registrationForm.plainPassword.vars.errors|length > 0 %}
+                                <div class="alert alert-danger mt-3">
+                                    {% for error in registrationForm.plainPassword.vars.errors %}
+                                        <p>{{ error.message }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
                             <button type="submit" class="btn btn-primary">S'inscrire</button>
                         {{ form_end(registrationForm) }}
                     </div>

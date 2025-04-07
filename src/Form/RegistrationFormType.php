@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class RegistrationFormType extends AbstractType
 {
@@ -44,15 +45,24 @@ class RegistrationFormType extends AbstractType
                 'first_options' => ['label' => 'Mot de passe'],
                 'second_options' => ['label' => 'Répéter le mot de passe'],
                 'constraints' => [
-                    new NotBlank(['message' => 'Veuillez entrer un mot de passe.']),
+                    new NotBlank([
+                        'message' => 'Veuillez entrer un mot de passe.',
+                        'groups' => ['Registration'], // Appliquer la contrainte dans le groupe 'Registration'
+                    ]),
                     new Length([
-                        'min' => 6,
+                        'min' => 8,
                         'minMessage' => 'Votre mot de passe doit comporter au moins {{ limit }} caractères.',
-                        
+                        // max length allowed by Symfony for security reasons
                         'max' => 4096,
+                        'groups' => ['Registration'], // Appliquer la contrainte dans le groupe 'Registration'
+                    ]),
+                    new Regex([
+                        'pattern' => "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/",
+                        'message' => 'Votre mot de passe doit contenir au moins 8 caractères, incluant une majuscule, une minuscule, un chiffre et un caractère spécial.',
+                        'groups' => ['Registration'], // Appliquer la contrainte dans le groupe 'Registration'
                     ]),
                 ],
-                'mapped' => false, 
+                'mapped' => false, // Ne pas mapper directement à une propriété de l'entité
             ])
         ;
     }
@@ -61,6 +71,7 @@ class RegistrationFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Utilisateur::class,
+            'validation_groups' => ['Default', 'Registration'], // Définir les groupes de validation pour le formulaire
         ]);
     }
 }

@@ -41,9 +41,19 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
-    
     #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: Commande::class, cascade: ['persist', 'remove'])]
     private Collection $commandes;
+
+    /**
+     * @Assert\NotBlank(groups={"Registration", "Profile"})
+     * @Assert\Length(min=8, max=4096, groups={"Registration", "Profile"})
+     * @Assert\Regex(
+     * pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/",
+     * message="Votre mot de passe doit contenir au moins 8 caractères, incluant une majuscule, une minuscule, un chiffre et un caractère spécial.",
+     * groups={"Registration", "Profile"}
+     * )
+     */
+    private ?string $plainPassword = null;
 
     public function __construct()
     {
@@ -63,7 +73,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -75,7 +84,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPrenom(string $prenom): static
     {
         $this->prenom = $prenom;
-
         return $this;
     }
 
@@ -87,11 +95,9 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
-    
     public function getPassword(): ?string
     {
         return $this->password;
@@ -100,7 +106,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
         return $this;
     }
 
@@ -112,41 +117,33 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCleUtilisateur(string $cleUtilisateur): static
     {
         $this->cleUtilisateur = $cleUtilisateur;
-
         return $this;
     }
 
-    
     public function getRoles(): array
     {
         $roles = $this->roles;
-
         $roles[] = 'ROLE_USER';
-
         return array_unique($roles);
     }
 
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
-
         return $this;
     }
 
-    
     public function eraseCredentials(): void
     {
-
-
+        // If you store any temporary, sensitive data on the user, clear it here
+        $this->plainPassword = null;
     }
 
-   
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-   
     public function getCommandes(): Collection
     {
         return $this->commandes;
@@ -158,19 +155,28 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
             $this->commandes->add($commande);
             $commande->setUtilisateur($this);
         }
-
         return $this;
     }
 
     public function removeCommande(Commande $commande): static
     {
         if ($this->commandes->removeElement($commande)) {
-
+            // set the owning side to null (unless you changed it to be owning side in the relation)
             if ($commande->getUtilisateur() === $this) {
                 $commande->setUtilisateur(null);
             }
         }
+        return $this;
+    }
 
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
         return $this;
     }
 }
