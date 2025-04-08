@@ -34,11 +34,11 @@ class VerifyEmailController extends AbstractController
           
             $emailVerificationService->markEmailAsVerified($user);
            
-            $this->addFlash('success', 'Votre adresse email a été vérifiée avec succès ! Vous êtes maintenant connecté.');
+            $this->addFlash('success', 'Votre adresse email a été vérifiée avec succès ! Vous pouvez vous connecter.');
             return $this->redirectToRoute('app_home'); 
         }
 
-        $this->addFlash('error', 'Le code de vérification est invalide ou a expiré. Veuillez réessayer.');
+        $this->addFlash('error', 'Votre lien a expiré. Veuillez réessayer.');
         return $this->redirectToRoute('app_verify_email_page');
     }
 

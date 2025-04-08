@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Votre billet pour {{ details_billet.nom_evenement }}</title>
+</head>
+<body>
+    <p>Bonjour {{ utilisateur.prenom }},</p>
+    <p>Félicitation pour votre achat "{{ details_billet.nom_evenement }}" !</p>
+    <p>Voici les détails de votre commande :</p>
+    <ul>
+        <li><strong>Evènement :</strong> {{ details_billet.nom_evenement }}</li>
+        <li><strong>Référence du billet :</strong> {{ details_billet.reference_billet }}</li>
+    </ul>
+    <p>Veuillez présenter votre QR code à l'entrée :</p>
+    <img src="{{ details_billet.qr_code_url }}" alt="QR Code Billet">
+    <p>Nous vous souhaitons une excellente expérience !</p>
+    <p>L'équipe Billetterie des jeux olympiques Paris 2024</p>
+</body>
+</html>

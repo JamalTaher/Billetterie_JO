@@ -5,16 +5,18 @@
 {% block body %}
     <h1>Votre paiement a été effectué avec succès !</h1>
 
-    {% if achats|length > 0 %}
+    {% if achatsAvecDetails|length > 0 %}
         <p>Merci pour votre achat. Voici les détails de votre commande :</p>
         <ul>
-            {% for achat in achats %}
+            {% for achatInfo in achatsAvecDetails %}
                 <li>
-                    Billet pour : {{ achat.prixOffreEvenement.evenement.nom }} - {{ achat.prixOffreEvenement.offre.nom }}
+                    Billet pour : {{ achatInfo.evenement.nom }} - {{ achatInfo.commande.prixOffreEvenement.offre.nom }}
                     <br>
-                    Clé de billet : <strong>{{ achat.cleBillet }}</strong>
+                    Date de l'événement : {{ achatInfo.evenement.date|date('d/m/Y H:i') }}
                     <br>
-                    {% set qrCodeApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' ~ achat.cleBillet %}
+                    Clé de billet : <strong>{{ achatInfo.commande.cleBillet }}</strong>
+                    <br>
+                    {% set qrCodeApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' ~ achatInfo.commande.cleBillet %}
                     <img src="{{ qrCodeApiUrl }}" alt="QR Code Billet">
                 </li>
             {% endfor %}
