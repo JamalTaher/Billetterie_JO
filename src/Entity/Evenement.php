@@ -123,7 +123,7 @@ class Evenement
     public function removePrixOffreEvenement(PrixOffreEvenement $prixOffreEvenement): static
     {
         if ($this->prixOffreEvenements->removeElement($prixOffreEvenement)) {
-            // set the owning side to null (unless already changed)
+            
             if ($prixOffreEvenement->getEvenement() === $this) {
                 $prixOffreEvenement->setEvenement(null);
             }

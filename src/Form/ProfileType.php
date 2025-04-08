@@ -39,7 +39,7 @@ class ProfileType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Utilisateur::class,
-            'validation_groups' => ['Default', 'Profile'], // Définir les groupes de validation pour le formulaire
+            'validation_groups' => ['Default', 'Profile'], 
         ]);
     }
 }

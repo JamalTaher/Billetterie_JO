@@ -47,22 +47,22 @@ class RegistrationFormType extends AbstractType
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Veuillez entrer un mot de passe.',
-                        'groups' => ['Registration'], // Appliquer la contrainte dans le groupe 'Registration'
+                        'groups' => ['Registration'], 
                     ]),
                     new Length([
                         'min' => 8,
                         'minMessage' => 'Votre mot de passe doit comporter au moins {{ limit }} caractères.',
-                        // max length allowed by Symfony for security reasons
+                        
                         'max' => 4096,
-                        'groups' => ['Registration'], // Appliquer la contrainte dans le groupe 'Registration'
+                        'groups' => ['Registration'], 
                     ]),
                     new Regex([
                         'pattern' => "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/",
                         'message' => 'Votre mot de passe doit contenir au moins 8 caractères, incluant une majuscule, une minuscule, un chiffre et un caractère spécial.',
-                        'groups' => ['Registration'], // Appliquer la contrainte dans le groupe 'Registration'
+                        'groups' => ['Registration'], 
                     ]),
                 ],
-                'mapped' => false, // Ne pas mapper directement à une propriété de l'entité
+                'mapped' => false, 
             ])
         ;
     }
@@ -71,7 +71,7 @@ class RegistrationFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Utilisateur::class,
-            'validation_groups' => ['Default', 'Registration'], // Définir les groupes de validation pour le formulaire
+            'validation_groups' => ['Default', 'Registration'], 
         ]);
     }
 }

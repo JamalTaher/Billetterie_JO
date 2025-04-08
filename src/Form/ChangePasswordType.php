@@ -28,7 +28,7 @@ class ChangePasswordType extends AbstractType
                             'message' => 'Veuillez entrer un mot de passe.',
                         ]),
                         new Length([
-                            'min' => 8, // Mise à jour à 8 caractères pour cohérence
+                            'min' => 8, 
                             'minMessage' => 'Votre mot de passe doit comporter au moins {{ limit }} caractères.',
                             'max' => 4096,
                         ]),

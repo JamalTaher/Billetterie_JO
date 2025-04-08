@@ -68,6 +68,13 @@
     </nav>
 
     <div class="container mt-4" style="flex-grow: 1;"> <!- Ajout du style inline ici -->
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
         {% block body %}{% endblock %}
     </div>
 

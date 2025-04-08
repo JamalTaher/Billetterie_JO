@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmez votre adresse email</title>
+</head>
+<body>
+    <h1>Veuillez confirmer votre adresse email !</h1>
+
+    <p>
+        Veuillez cliquer sur le lien suivant pour vérifier votre adresse email :
+        <a href="{{ verificationUrl }}">{{ verificationUrl }}</a>
+    </p>
+
+    <p>
+        Ce lien expirera dans {{ tokenLifetime }} secondes.
+    </p>
+
+    <p>
+        Merci !
+    </p>
+</body>
+</html>

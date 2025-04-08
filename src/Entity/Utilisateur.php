@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
-#[ORM\Table(name: 'utilisateur')] // Bonne pratique de nommer la table
+#[ORM\Table(name: 'utilisateur')] 
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -44,16 +44,17 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: Commande::class, cascade: ['persist', 'remove'])]
     private Collection $commandes;
 
-    /**
-     * @Assert\NotBlank(groups={"Registration", "Profile"})
-     * @Assert\Length(min=8, max=4096, groups={"Registration", "Profile"})
-     * @Assert\Regex(
-     * pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/",
-     * message="Votre mot de passe doit contenir au moins 8 caractères, incluant une majuscule, une minuscule, un chiffre et un caractère spécial.",
-     * groups={"Registration", "Profile"}
-     * )
-     */
+   
     private ?string $plainPassword = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $emailVerificationCode = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $emailVerificationRequestedAt = null;
+
+    #[ORM\Column(type: 'boolean')]
+    private $isEmailVerified = false; 
 
     public function __construct()
     {
@@ -135,7 +136,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
+        
         $this->plainPassword = null;
     }
 
@@ -161,7 +162,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeCommande(Commande $commande): static
     {
         if ($this->commandes->removeElement($commande)) {
-            // set the owning side to null (unless you changed it to be owning side in the relation)
+            
             if ($commande->getUtilisateur() === $this) {
                 $commande->setUtilisateur(null);
             }
@@ -177,6 +178,39 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPlainPassword(?string $plainPassword): self
     {
         $this->plainPassword = $plainPassword;
+        return $this;
+    }
+
+    public function getEmailVerificationCode(): ?string
+    {
+        return $this->emailVerificationCode;
+    }
+
+    public function setEmailVerificationCode(?string $emailVerificationCode): self
+    {
+        $this->emailVerificationCode = $emailVerificationCode;
+        return $this;
+    }
+
+    public function getEmailVerificationRequestedAt(): ?\DateTimeImmutable
+    {
+        return $this->emailVerificationRequestedAt;
+    }
+
+    public function setEmailVerificationRequestedAt(?\DateTimeImmutable $emailVerificationRequestedAt): self
+    {
+        $this->emailVerificationRequestedAt = $emailVerificationRequestedAt;
+        return $this;
+    }
+
+    public function isVerified(): bool 
+    {
+        return $this->isEmailVerified;
+    }
+
+    public function setIsVerified(bool $isEmailVerified): self 
+    {
+        $this->isEmailVerified = $isEmailVerified;
         return $this;
     }
 }

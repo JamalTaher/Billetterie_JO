@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vérifiez votre adresse email{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>Vérifiez votre adresse email</h1>
+
+        <p>
+            Veuillez vérifier votre boîte de réception pour confirmer votre adresse e-mail.
+        </p>
+
+        <p>
+            N'avez-vous pas reçu d'email ? <a href="{{ path('app_resend_verification_email') }}">Renvoyer l'email de vérification</a>
+        </p>
+    </div>
+{% endblock %}

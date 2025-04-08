@@ -44,21 +44,33 @@ class UtilisateurRepository extends ServiceEntityRepository implements PasswordU
             throw new UnsupportedUserException(sprintf('Expected a %s instance, but got %s.', Utilisateur::class, get_class($user)));
         }
 
-        $user->setPassword($newHashedPassword);
+        $user->setMotDePasse($newHashedPassword);
         $this->save($user, true);
     }
 
    
+    
+     
+   
     public function loadUserByIdentifier(string $identifier): ?UserInterface
     {
-        $user = $this->findOneBy(['email' => $identifier]);
+        $user = $this->createQueryBuilder('u')
+            ->where('u.email = :email')
+            ->andWhere('u.isEmailVerified = true')
+            ->setParameter('email', $identifier)
+            ->getQuery()
+            ->getOneOrNullResult();
 
         if (null === $user) {
-            throw new UserNotFoundException('Email not found.');
+            throw new UserNotFoundException('Email non trouvé ou compte non vérifié.');
         }
 
         return $user;
     }
 
-    
+   
+    public function findOneByEmail(string $email): ?Utilisateur
+    {
+        return $this->findOneBy(['email' => $email]);
+    }
 }

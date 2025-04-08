@@ -40,7 +40,7 @@ class ProfileController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $plainPassword = $form->get('plainPassword')->getData();
 
-            // Si un nouveau mot de passe a été soumis, on le hashe et on met à jour l'utilisateur
+           
             if ($plainPassword) {
                 $hashedPassword = $this->passwordHasher->hashPassword(
                     $user,
