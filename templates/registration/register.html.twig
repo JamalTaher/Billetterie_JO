@@ -32,17 +32,26 @@
 
                             <div class="mb-3">
                                 {{ form_label(registrationForm.plainPassword.first, 'Mot de passe', {'label_attr': {'class': 'form-label'}}) }}
-                                {{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'form-control'}}) }}
+                                <div style="position: relative;">
+                                    {{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'form-control'}}) }}
+                                    <span class="password-toggle" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); cursor: pointer;">
+                                        👁️
+                                    </span>
+                                </div>
                                 {{ form_errors(registrationForm.plainPassword.first) }}
                             </div>
 
                             <div class="mb-3">
                                 {{ form_label(registrationForm.plainPassword.second, 'Répéter le mot de passe', {'label_attr': {'class': 'form-label'}}) }}
-                                {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
+                                <div style="position: relative;">
+                                    {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
+                                    <span class="password-toggle" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); cursor: pointer;">
+                                        👁️
+                                    </span>
+                                </div>
                                 {{ form_errors(registrationForm.plainPassword.second) }}
                             </div>
 
-                            {# Affichage des erreurs pour le champ plainPassword (le champ principal avec les contraintes) #}
                             {% if registrationForm.plainPassword.vars.errors|length > 0 %}
                                 <div class="alert alert-danger mt-3">
                                     {% for error in registrationForm.plainPassword.vars.errors %}
@@ -58,4 +67,24 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInputs = document.querySelectorAll('input[type="password"]');
+            const passwordToggles = document.querySelectorAll('.password-toggle');
+
+            passwordToggles.forEach((toggle, index) => {
+                toggle.addEventListener('click', function() {
+                    const passwordInput = passwordInputs[index];
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        toggle.textContent = '👁️‍🗨️';
+                    } else {
+                        passwordInput.type = 'password';
+                        toggle.textContent = '👁️';
+                    }
+                });
+            });
+        });
+    </script>
 {% endblock %}
