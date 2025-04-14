@@ -38,23 +38,12 @@ class ProfileController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $plainPassword = $form->get('plainPassword')->getData();
-
-           
-            if ($plainPassword) {
-                $hashedPassword = $this->passwordHasher->hashPassword(
-                    $user,
-                    $plainPassword
-                );
-                $user->setPassword($hashedPassword);
-            }
-
             $this->entityManager->flush();
             $this->addFlash('success', 'Vos informations personnelles ont été mises à jour avec succès.');
 
             return $this->redirectToRoute('app_profile_index');
         }
-      
+
         return $this->render('profile/edit.html.twig', [
             'form' => $form->createView(),
         ]);
