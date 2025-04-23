@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Evenement;
+use App\Entity\Commande; 
 use App\Form\Admin\EvenementType;
 use App\Repository\CommandeRepository;
 use App\Repository\EvenementRepository;
@@ -97,6 +98,20 @@ class AdminController extends AbstractController
     #[Route('/evenement/delete/{id}', name: 'evenement_delete', requirements: ['id' => '\d+'])]
     public function deleteEvenement(EntityManagerInterface $entityManager, Evenement $evenement): Response
     {
+       
+        $prixOffreEvenements = $evenement->getPrixOffreEvenements();
+
+        
+        foreach ($prixOffreEvenements as $prixOffreEvenement) {
+            $commandes = $entityManager->getRepository(Commande::class)->findBy(['prixOffreEvenement' => $prixOffreEvenement]);
+            foreach ($commandes as $commande) {
+                $commande->setPrixOffreEvenement(null);
+                $entityManager->persist($commande);
+            }
+        }
+        $entityManager->flush(); 
+
+        
         $entityManager->remove($evenement);
         $entityManager->flush();
 

@@ -17,18 +17,18 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Offre ajoutée au panier !');
+                   // alert('Offre ajoutée au panier !');
                     if (panierCountElement) {
                         panierCountElement.textContent = data.panierCount;
                     }
                 } else {
-                    alert('Erreur lors de l\'ajout au panier.');
+                    //alert('Erreur lors de l\'ajout au panier.');
                     console.error(data.message);
                 }
             })
             .catch(error => {
                 console.error('Erreur réseau lors de l\'ajout au panier:', error);
-                alert('Erreur réseau lors de l\'ajout au panier.');
+                //alert('Erreur réseau lors de l\'ajout au panier.');
             });
         });
     });
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Élément supprimé du panier !');
+                   // alert('Élément supprimé du panier !');
                     
                     window.location.reload();
                     
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error('Erreur réseau lors de la suppression de l\'élément:', error);
-                alert('Erreur réseau lors de la suppression de l\'élément.');
+                //alert('Erreur réseau lors de la suppression de l\'élément.');
             });
         });
     });
