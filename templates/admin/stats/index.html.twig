@@ -9,24 +9,32 @@
         <div class="col-md-8">
             <h2>Ventes par Événement</h2>
             {% if ventesParEvenement is not empty %}
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Événement</th>
-                            <th>Nombre de Ventes</th>
-                            <th>Montant Total des Ventes</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for vente in ventesParEvenement %}
+                <div style="max-height: 400px; overflow-y: auto;">
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <td>{{ vente.evenement_nom }}</td>
-                                <td>{{ vente.nombre_ventes }}</td>
-                                <td>{{ vente.montant_total|number_format(2, ',', ' ') }} €</td>
+                                <th>Événement</th>
+                                <th>Nombre de Ventes</th>
+                                <th>Montant Total des Ventes</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% set totalVentes = 0 %}
+                            {% for vente in ventesParEvenement %}
+                                <tr>
+                                    <td>{{ vente.evenement_nom }}</td>
+                                    <td>{{ vente.nombre_ventes }}</td>
+                                    <td>{{ vente.montant_total|number_format(2, ',', ' ') }} €</td>
+                                </tr>
+                                {% set totalVentes = totalVentes + vente.montant_total %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top: 10px; font-weight: bold;">
+                    Total des ventes : {{ totalVentes|number_format(2, ',', ' ') }} €
+                </div>
             {% else %}
                 <p>Aucune vente enregistrée pour le moment.</p>
             {% endif %}

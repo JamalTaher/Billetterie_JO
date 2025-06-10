@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity; // C'est le bon namespace pour une entité !
 
 use App\Repository\OffreRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OffreRepository::class)]
-class Offre
+class Offre // C'est la classe Offre, pas OffreTest !
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -77,7 +77,6 @@ class Offre
         return $this;
     }
 
-  
     public function getCommandes(): Collection
     {
         return $this->commandes;
@@ -96,7 +95,6 @@ class Offre
     public function removeCommande(Commande $commande): static
     {
         if ($this->commandes->removeElement($commande)) {
-            
             if ($commande->getOffre() === $this) {
                 $commande->setOffre(null);
             }
@@ -105,7 +103,6 @@ class Offre
         return $this;
     }
 
-   
     public function getPrixOffreEvenements(): Collection
     {
         return $this->prixOffreEvenements;
@@ -124,7 +121,6 @@ class Offre
     public function removePrixOffreEvenement(PrixOffreEvenement $prixOffreEvenement): static
     {
         if ($this->prixOffreEvenements->removeElement($prixOffreEvenement)) {
-            
             if ($prixOffreEvenement->getOffre() === $this) {
                 $prixOffreEvenement->setOffre(null);
             }
