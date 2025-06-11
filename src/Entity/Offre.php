@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity; // C'est le bon namespace pour une entité !
+namespace App\Entity;
 
 use App\Repository\OffreRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OffreRepository::class)]
-class Offre // C'est la classe Offre, pas OffreTest !
+class Offre
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -24,6 +24,9 @@ class Offre // C'est la classe Offre, pas OffreTest !
     #[ORM\Column]
     private ?int $capacite = null;
 
+   
+    #[ORM\Column(type: 'float')]
+    private ?float $prixStandard = null; 
     #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'offre')]
     private Collection $commandes;
 
@@ -73,6 +76,19 @@ class Offre // C'est la classe Offre, pas OffreTest !
     public function setCapacite(int $capacite): static
     {
         $this->capacite = $capacite;
+
+        return $this;
+    }
+
+   
+    public function getPrixStandard(): ?float
+    {
+        return $this->prixStandard;
+    }
+
+    public function setPrixStandard(float $prixStandard): static
+    {
+        $this->prixStandard = $prixStandard;
 
         return $this;
     }

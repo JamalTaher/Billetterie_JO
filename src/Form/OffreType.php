@@ -19,7 +19,7 @@ class OffreType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class, [
-                'label' => 'Nom de l\'offre',
+                'label' => 'Nom de l\'offre (ex: Tarif Solo, Tarif Duo)', 
                 'constraints' => [
                     new NotBlank(['message' => 'Veuillez entrer le nom de l\'offre.']),
                 ],
@@ -28,18 +28,21 @@ class OffreType extends AbstractType
                 'label' => 'Description',
                 'required' => false,
             ])
-            ->add('prix', NumberType::class, [
-                'label' => 'Prix',
-                'constraints' => [
-                    new NotBlank(['message' => 'Veuillez entrer le prix.']),
-                    new Positive(['message' => 'Le prix doit être positif.']),
-                ],
-            ])
             ->add('capacite', IntegerType::class, [
                 'label' => 'Capacité (nombre de personnes)',
                 'constraints' => [
                     new NotBlank(['message' => 'Veuillez entrer la capacité.']),
                     new Positive(['message' => 'La capacité doit être positive.']),
+                ],
+            ])
+            
+            ->add('prixStandard', NumberType::class, [ 
+                'label' => 'Prix standard de l\'offre (€)', 
+                'html5' => true, 
+                'scale' => 2, 
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez entrer le prix standard.']),
+                    new Positive(['message' => 'Le prix standard doit être positif.']),
                 ],
             ])
         ;

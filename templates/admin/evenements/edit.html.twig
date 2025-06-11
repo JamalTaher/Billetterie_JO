@@ -1,31 +1,133 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/index.html.twig' %} {# Assurez-vous que c'est le bon layout parent si ce n'est pas 'base.html.twig' #}
 
 {% block title %}Modifier l'événement : {{ evenement.nom }}{% endblock %}
 
-{% block body %}
+{% block body_content %} {# Utiliser body_content si votre base.html.twig définit ce bloc #}
     <h1>Modifier l'événement : {{ evenement.nom }}</h1>
 
     {{ form_start(form) }}
-        {{ form_row(form.nom) }}
-        {{ form_row(form.categorie) }}
-        {{ form_row(form.date) }}
-        {{ form_row(form.lieu) }}
-        {{ form_row(form.description) }}
+        {# Champs de l'événement #}
+        <div class="mb-3">
+            {{ form_row(form.nom) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(form.categorie) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(form.date) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(form.lieu) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(form.description) }}
+        </div>
 
         <h2>Prix et Offres</h2>
-        <ul class="prix-offres" data-prototype="{{ form_widget(form.prixOffreEvenements.vars.prototype)|e('html_attr') }}">
+        {# AJOUTER CETTE CLASSE collection-container et data-index #}
+        <div id="prix-offres-fields-list" class="collection-container"
+             data-prototype="{{ form_widget(form.prixOffreEvenements.vars.prototype)|e('html_attr') }}"
+             data-index="{{ form.prixOffreEvenements|length > 0 ? form.prixOffreEvenements|last.vars.name + 1 : 0 }}">
             {% for prixOffreEvenementForm in form.prixOffreEvenements %}
-                <li>
+                {# AJOUTER CETTE CLASSE prix-offre-evenement-item #}
+                <div class="prix-offre-evenement-item mb-3 p-3 border rounded shadow-sm">
                     {{ form_row(prixOffreEvenementForm.offre) }}
                     {{ form_row(prixOffreEvenementForm.prix) }}
-                    <button type="button" class="btn btn-danger btn-sm remove-prix-offre">Supprimer</button>
-                </li>
+                    <button type="button" class="btn btn-danger btn-sm remove-prix-offre mt-2">Supprimer cette offre</button>
+                    {{ form_errors(prixOffreEvenementForm) }}
+                </div>
             {% endfor %}
-        </ul>
+        </div>
         {{ form_errors(form.prixOffreEvenements) }}
 
-        <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+        <button type="button" class="btn btn-info add-another-prix-offre mt-3 mb-3">Ajouter un Prix/Offre</button>
+
+        <button type="submit" class="btn btn-primary mt-3">Enregistrer les modifications</button>
     {{ form_end(form) }}
 
     <a href="{{ path('admin_index') }}" class="btn btn-secondary mt-3">Retour à la liste des événements</a>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }} {# Conserve les scripts du template parent #}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const addFormButton = document.querySelector('.add-another-prix-offre');
+            const collectionHolder = document.querySelector('.collection-container');
+            
+            let index = collectionHolder.dataset.index ? parseInt(collectionHolder.dataset.index) : collectionHolder.children.length;
+
+            const addFormToCollection = (e) => {
+                e.preventDefault();
+
+                const prototype = collectionHolder.dataset.prototype;
+                const newForm = prototype.replace(/__name__/g, index);
+                index++;
+
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = newForm;
+                const newFormElement = tempDiv.firstChild;
+
+                newFormElement.classList.add('prix-offre-evenement-item', 'mb-3', 'p-3', 'border', 'rounded', 'shadow-sm');
+
+                const removeBtn = document.createElement('button');
+                removeBtn.setAttribute('type', 'button');
+                removeBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-prix-offre', 'mt-2');
+                removeBtn.textContent = 'Supprimer cette offre';
+                newFormElement.appendChild(removeBtn);
+
+                collectionHolder.appendChild(newFormElement);
+
+                addRemoveButtonListener(removeBtn);
+                attachPriceChangeListener(newFormElement.querySelector('.prix-offre-evenement-offre-select'));
+            };
+
+            const addRemoveButtonListener = (button) => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    button.closest('.prix-offre-evenement-item').remove();
+                });
+            };
+
+            const attachPriceChangeListener = (selectElement) => {
+                if (selectElement && !selectElement.dataset.listenerAttached) {
+                    selectElement.addEventListener('change', function() {
+                        updatePriceField(this);
+                    });
+                    updatePriceField(selectElement); // Initialiser la valeur au chargement
+                    selectElement.dataset.listenerAttached = true;
+                }
+            };
+
+            function updatePriceField(priceSelectElement) {
+                const selectedOption = priceSelectElement.options[priceSelectElement.selectedIndex];
+                const prixStandard = selectedOption.dataset.prixStandard;
+
+                const priceField = priceSelectElement.closest('.prix-offre-evenement-item')
+                                    ? priceSelectElement.closest('.prix-offre-evenement-item').querySelector('.prix-offre-evenement-prix-field')
+                                    : null;
+
+                if (priceField && prixStandard !== undefined && prixStandard !== null) {
+                    const currentPriceValue = priceField.value === '' ? null : parseFloat(priceField.value);
+                    const previousStandardPrice = priceField.dataset.initialStandardPrice ? parseFloat(priceField.dataset.initialStandardPrice) : null;
+
+                    if (currentPriceValue === null || currentPriceValue === previousStandardPrice) {
+                        priceField.value = prixStandard;
+                    }
+                    priceField.dataset.initialStandardPrice = prixStandard;
+                } else if (priceField) {
+                    priceField.value = '';
+                    delete priceField.dataset.initialStandardPrice;
+                }
+            }
+
+            if (addFormButton) {
+                addFormButton.addEventListener('click', addFormToCollection);
+            }
+
+            collectionHolder.querySelectorAll('.remove-prix-offre').forEach(addRemoveButtonListener);
+            collectionHolder.querySelectorAll('.prix-offre-evenement-offre-select').forEach(attachPriceChangeListener);
+        });
+    </script>
 {% endblock %}

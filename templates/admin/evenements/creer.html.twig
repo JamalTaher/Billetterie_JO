@@ -4,15 +4,155 @@
     <h1>Créer un nouvel événement</h1>
 
     {{ form_start(form, {'attr': {'class': 'mb-3'}}) }}
-        {% for child in form %}
-            <div class="mb-3">
-                {{ form_label(child, null, {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(child, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(child) }}
-            </div>
-        {% endfor %}
-        <button type="submit" class="btn btn-primary">Créer l'événement</button>
+        {# Champs de l'événement #}
+        <div class="mb-3">
+            {{ form_label(form.nom, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.nom) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.categorie, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.categorie, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.categorie) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.date, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.date) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.lieu, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.lieu, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.lieu) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 5}}) }}
+            {{ form_errors(form.description) }}
+        </div>
+
+        {# Section Prix et Offres (CollectionType) #}
+        <h2>Prix et Offres</h2>
+        {# Le div avec la classe 'collection-container' est essentielle pour le JS #}
+        <div id="prix-offres-fields-list" class="collection-container"
+             data-prototype="{{ form_widget(form.prixOffreEvenements.vars.prototype)|e('html_attr') }}"
+             data-index="{{ form.prixOffreEvenements|length > 0 ? form.prixOffreEvenements|last.vars.name + 1 : 0 }}">
+            {% for prixOffreEvenementForm in form.prixOffreEvenements %}
+                <div class="prix-offre-evenement-item mb-3 p-3 border rounded shadow-sm"> {# Ajouter des classes pour le style #}
+                    {{ form_row(prixOffreEvenementForm.offre) }}
+                    {{ form_row(prixOffreEvenementForm.prix) }}
+                    <button type="button" class="btn btn-danger btn-sm remove-prix-offre mt-2">Supprimer cette offre</button>
+                    {{ form_errors(prixOffreEvenementForm) }} {# Afficher les erreurs spécifiques à l'offre #}
+                </div>
+            {% endfor %}
+        </div>
+        {{ form_errors(form.prixOffreEvenements) }} {# Afficher les erreurs globales de la collection #}
+
+        <button type="button" class="btn btn-info add-another-prix-offre mt-3 mb-3">Ajouter un Prix/Offre</button>
+
+        {# Boutons de soumission #}
+        <button type="submit" class="btn btn-primary mt-3">Créer l'événement</button>
     {{ form_end(form) }}
 
     <a href="{{ path('admin_evenements_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }} {# Conserve les scripts du template parent #}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const addFormButton = document.querySelector('.add-another-prix-offre');
+            const collectionHolder = document.querySelector('.collection-container');
+            
+            // Initialise l'index de la collection
+            let index = collectionHolder.dataset.index ? parseInt(collectionHolder.dataset.index) : collectionHolder.children.length;
+
+            // Fonction pour ajouter un nouveau formulaire d'offre
+            const addFormToCollection = (e) => {
+                e.preventDefault();
+
+                const prototype = collectionHolder.dataset.prototype;
+                const newForm = prototype.replace(/__name__/g, index);
+                index++;
+
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = newForm;
+                const newFormElement = tempDiv.firstChild;
+
+                // Ajoutez les classes pour le style et pour cibler le JS
+                newFormElement.classList.add('prix-offre-evenement-item', 'mb-3', 'p-3', 'border', 'rounded', 'shadow-sm');
+
+                // Ajout du bouton de suppression au nouveau formulaire
+                const removeBtn = document.createElement('button');
+                removeBtn.setAttribute('type', 'button');
+                removeBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-prix-offre', 'mt-2');
+                removeBtn.textContent = 'Supprimer cette offre';
+                newFormElement.appendChild(removeBtn);
+
+                collectionHolder.appendChild(newFormElement);
+
+                // Attacher l'écouteur de suppression au nouveau bouton
+                addRemoveButtonListener(removeBtn);
+                // Attacher l'écouteur de changement de prix à la nouvelle liste déroulante
+                attachPriceChangeListener(newFormElement.querySelector('.prix-offre-evenement-offre-select'));
+            };
+
+            // Fonction pour attacher l'écouteur de suppression
+            const addRemoveButtonListener = (button) => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    button.closest('.prix-offre-evenement-item').remove();
+                });
+            };
+
+            // Fonction pour attacher l'écouteur de changement de prix
+            const attachPriceChangeListener = (selectElement) => {
+                if (selectElement && !selectElement.dataset.listenerAttached) {
+                    selectElement.addEventListener('change', function() {
+                        updatePriceField(this);
+                    });
+                    // Initialiser la valeur au chargement pour les éléments existants
+                    updatePriceField(selectElement);
+                    selectElement.dataset.listenerAttached = true; // Marquer l'écouteur comme attaché
+                }
+            };
+
+            // Fonction pour mettre à jour le champ prix (identique à celle de l'étape précédente)
+            function updatePriceField(priceSelectElement) {
+                const selectedOption = priceSelectElement.options[priceSelectElement.selectedIndex];
+                const prixStandard = selectedOption.dataset.prixStandard;
+
+                const priceField = priceSelectElement.closest('.prix-offre-evenement-item')
+                                    ? priceSelectElement.closest('.prix-offre-evenement-item').querySelector('.prix-offre-evenement-prix-field')
+                                    : null;
+
+                if (priceField && prixStandard !== undefined && prixStandard !== null) { // Vérifier que prixStandard est défini
+                    // Si le champ prix est vide ou si sa valeur actuelle est le prix standard précédent, le mettre à jour
+                    // Utiliser un attribut dataset pour stocker le prix standard initial de l'offre
+                    const currentPriceValue = priceField.value === '' ? null : parseFloat(priceField.value);
+                    const previousStandardPrice = priceField.dataset.initialStandardPrice ? parseFloat(priceField.dataset.initialStandardPrice) : null;
+
+                    if (currentPriceValue === null || currentPriceValue === previousStandardPrice) {
+                        priceField.value = prixStandard;
+                    }
+                    priceField.dataset.initialStandardPrice = prixStandard; // Mettre à jour le prix standard initial
+                } else if (priceField) {
+                    // Si aucune offre n'est sélectionnée ou pas de prix standard, vider le champ
+                    priceField.value = '';
+                    delete priceField.dataset.initialStandardPrice;
+                }
+            }
+
+
+            // Attacher l'écouteur au bouton "Ajouter un Prix/Offre"
+            if (addFormButton) {
+                addFormButton.addEventListener('click', addFormToCollection);
+            }
+
+            // Attacher les écouteurs aux boutons "Supprimer" et listes déroulantes existants au chargement
+            collectionHolder.querySelectorAll('.remove-prix-offre').forEach(addRemoveButtonListener);
+            collectionHolder.querySelectorAll('.prix-offre-evenement-offre-select').forEach(attachPriceChangeListener);
+        });
+    </script>
 {% endblock %}
