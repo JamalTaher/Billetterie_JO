@@ -12,7 +12,8 @@
                 <li>
                     Billet pour : {{ achatInfo.evenement.nom }} - {{ achatInfo.commande.prixOffreEvenement.offre.nom }}
                     <br>
-                    Date de l'événement : {{ achatInfo.evenement.date|date('d/m/Y H:i') }}
+                   
+                    Date de l'événement : {{ achatInfo.evenement.dateHeure|date('d/m/Y H:i') }}
                     <br>
                     Clé de billet : <strong>{{ achatInfo.commande.cleBillet }}</strong>
                     <br>

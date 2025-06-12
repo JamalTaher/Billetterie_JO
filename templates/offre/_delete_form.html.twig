@@ -1,0 +1,6 @@
+{# templates/offre/_delete_form.html.twig #}
+<form method="post" action="{{ path('app_offre_delete', {'id': offre.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ offre.id) }}">
+   
+    <button class="btn btn-danger mt-3">Supprimer</button>
+</form>

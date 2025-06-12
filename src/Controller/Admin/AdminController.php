@@ -3,16 +3,17 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Evenement;
-use App\Entity\Commande; 
+use App\Entity\Commande;
 use App\Form\Admin\EvenementType;
 use App\Repository\CommandeRepository;
-use App\Repository\EvenementRepository;
+use App\Repository\EvenementRepository; 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted; 
+
 
 #[Route('/admin', name: 'admin_')]
 #[IsGranted('ROLE_ADMIN')]
@@ -25,7 +26,23 @@ class AdminController extends AbstractController
     #[Route('/', name: 'index')]
     public function index(): Response
     {
-        return $this->redirectToRoute('admin_select_category');
+        return $this->render('admin/dashboard.html.twig');
+    }
+
+    #[Route('/evenements', name: 'evenements_list')]
+    #[Route('/evenements/category/{category}', name: 'evenement_by_category')]
+    public function listEvenements(?string $category = null, EvenementRepository $evenementRepository): Response
+    {
+        if ($category) {
+            $evenements = $evenementRepository->findBy(['categorie' => $category]);
+        } else {
+            $evenements = $evenementRepository->findAll();
+        }
+
+        return $this->render('admin/evenements/index.html.twig', [
+            'evenements' => $evenements,
+            'currentCategory' => $category,
+        ]);
     }
 
     #[Route('/categories', name: 'select_category')]
@@ -41,22 +58,12 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/evenements/{category}', name: 'evenement_by_category')]
-    public function evenementsByCategory(string $category, EvenementRepository $evenementRepository): Response
-    {
-        $evenements = $evenementRepository->findBy(['categorie' => $category]);
-
-        return $this->render('admin/evenements/evenements_by_category.html.twig', [
-            'evenements' => $evenements,
-            'category' => $category,
-        ]);
-    }
 
     #[Route('/evenement/new', name: 'evenement_new')]
     public function newEvenement(Request $request, EntityManagerInterface $entityManager): Response
     {
         $evenement = new Evenement();
-        $evenement->createPrixOffreEvenement();
+        
         $form = $this->createForm(EvenementType::class, $evenement);
 
         $form->handleRequest($request);
@@ -67,7 +74,7 @@ class AdminController extends AbstractController
 
             $this->addFlash('success', 'L\'événement a été créé avec succès.');
 
-            return $this->redirectToRoute('admin_select_category');
+            return $this->redirectToRoute('admin_evenements_list');
         }
 
         return $this->render('admin/evenements/new.html.twig', [
@@ -86,7 +93,7 @@ class AdminController extends AbstractController
 
             $this->addFlash('success', 'L\'événement a été modifié avec succès.');
 
-            return $this->redirectToRoute('admin_select_category');
+            return $this->redirectToRoute('admin_evenements_list');
         }
 
         return $this->render('admin/evenements/edit.html.twig', [
@@ -98,10 +105,8 @@ class AdminController extends AbstractController
     #[Route('/evenement/delete/{id}', name: 'evenement_delete', requirements: ['id' => '\d+'])]
     public function deleteEvenement(EntityManagerInterface $entityManager, Evenement $evenement): Response
     {
-       
         $prixOffreEvenements = $evenement->getPrixOffreEvenements();
 
-        
         foreach ($prixOffreEvenements as $prixOffreEvenement) {
             $commandes = $entityManager->getRepository(Commande::class)->findBy(['prixOffreEvenement' => $prixOffreEvenement]);
             foreach ($commandes as $commande) {
@@ -111,13 +116,12 @@ class AdminController extends AbstractController
         }
         $entityManager->flush(); 
 
-        
         $entityManager->remove($evenement);
         $entityManager->flush();
 
         $this->addFlash('success', 'L\'événement a été supprimé avec succès.');
 
-        return $this->redirectToRoute('admin_select_category');
+        return $this->redirectToRoute('admin_evenements_list');
     }
 
     #[Route('/stats', name: 'stats_index')]

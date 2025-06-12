@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\PrixOffreEvenementRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types; 
 
 #[ORM\Entity(repositoryClass: PrixOffreEvenementRepository::class)]
 class PrixOffreEvenement
@@ -13,7 +14,8 @@ class PrixOffreEvenement
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
+    
+    #[ORM\Column(type: Types::FLOAT, nullable: true)] 
     private ?float $prix = null;
 
     #[ORM\ManyToOne(targetEntity: Offre::class, inversedBy: 'prixOffreEvenements')]
@@ -34,7 +36,8 @@ class PrixOffreEvenement
         return $this->prix;
     }
 
-    public function setPrix(float $prix): static
+    
+    public function setPrix(?float $prix): static 
     {
         $this->prix = $prix;
 

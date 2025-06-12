@@ -1,42 +1,15 @@
-{% extends 'base.html.twig' %}
+{# templates/admin/index.html.twig #}
+{% extends 'base.html.twig' %} {# Il étend le layout racine #}
 
-{% block title %}Page d'administration{% endblock %}
+{% block title %}{% block admin_title %}Administration{% endblock %}{% endblock %} {# Permet de changer le titre de l'admin #}
 
-{% block body %}
-    <h1>Page d'administration</h1>
+{% block body %} {# Ce bloc 'body' est celui du layout base.html.twig #}
 
-    <p>Bienvenue dans l'interface d'administration.</p>
+  
 
-    <h2>Gestion des Événements</h2>
-    <a href="{{ path('admin_evenement_new') }}" class="btn btn-success mb-3">Créer un nouvel événement</a>
+    <div class="container mt-4" style="flex-grow: 1;">
+        
+        {% block body_content %}{% endblock %} 
+    </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nom</th>
-                <th>Catégorie</th>
-                <th>Date</th>
-                <th>Lieu</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for evenement in evenements %}
-                <tr>
-                    <td>{{ evenement.id }}</td>
-                    <td>{{ evenement.nom }}</td>
-                    <td>{{ evenement.categorie }}</td>
-                    <td>{{ evenement.date ? evenement.date|date('d/m/Y H:i') : 'Non défini' }}</td>
-                    <td>{{ evenement.lieu }}</td>
-                    <td>
-                        <a href="{{ path('admin_evenement_edit', {'id': evenement.id}) }}" class="btn btn-sm btn-primary">Modifier</a>
-                        <a href="{{ path('admin_evenement_delete', {'id': evenement.id}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')">Supprimer</a>
-                    </td>
-                </tr>
-            {% else %}
-                <tr><td colspan="6">Aucun événement trouvé.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
 {% endblock %}

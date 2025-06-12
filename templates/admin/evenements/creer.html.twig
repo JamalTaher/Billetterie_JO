@@ -4,7 +4,7 @@
     <h1>Créer un nouvel événement</h1>
 
     {{ form_start(form, {'attr': {'class': 'mb-3'}}) }}
-        {# Champs de l'événement #}
+       
         <div class="mb-3">
             {{ form_label(form.nom, null, {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
@@ -31,9 +31,9 @@
             {{ form_errors(form.description) }}
         </div>
 
-        {# Section Prix et Offres (CollectionType) #}
+       
         <h2>Prix et Offres</h2>
-        {# Le div avec la classe 'collection-container' est essentielle pour le JS #}
+        
         <div id="prix-offres-fields-list" class="collection-container"
              data-prototype="{{ form_widget(form.prixOffreEvenements.vars.prototype)|e('html_attr') }}"
              data-index="{{ form.prixOffreEvenements|length > 0 ? form.prixOffreEvenements|last.vars.name + 1 : 0 }}">
@@ -65,7 +65,7 @@
             const addFormButton = document.querySelector('.add-another-prix-offre');
             const collectionHolder = document.querySelector('.collection-container');
             
-            // Initialise l'index de la collection
+           
             let index = collectionHolder.dataset.index ? parseInt(collectionHolder.dataset.index) : collectionHolder.children.length;
 
             // Fonction pour ajouter un nouveau formulaire d'offre
@@ -80,10 +80,10 @@
                 tempDiv.innerHTML = newForm;
                 const newFormElement = tempDiv.firstChild;
 
-                // Ajoutez les classes pour le style et pour cibler le JS
+                
                 newFormElement.classList.add('prix-offre-evenement-item', 'mb-3', 'p-3', 'border', 'rounded', 'shadow-sm');
 
-                // Ajout du bouton de suppression au nouveau formulaire
+                
                 const removeBtn = document.createElement('button');
                 removeBtn.setAttribute('type', 'button');
                 removeBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-prix-offre', 'mt-2');
@@ -92,13 +92,13 @@
 
                 collectionHolder.appendChild(newFormElement);
 
-                // Attacher l'écouteur de suppression au nouveau bouton
+               
                 addRemoveButtonListener(removeBtn);
-                // Attacher l'écouteur de changement de prix à la nouvelle liste déroulante
+                
                 attachPriceChangeListener(newFormElement.querySelector('.prix-offre-evenement-offre-select'));
             };
 
-            // Fonction pour attacher l'écouteur de suppression
+           
             const addRemoveButtonListener = (button) => {
                 button.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -106,7 +106,6 @@
                 });
             };
 
-            // Fonction pour attacher l'écouteur de changement de prix
             const attachPriceChangeListener = (selectElement) => {
                 if (selectElement && !selectElement.dataset.listenerAttached) {
                     selectElement.addEventListener('change', function() {
@@ -118,7 +117,7 @@
                 }
             };
 
-            // Fonction pour mettre à jour le champ prix (identique à celle de l'étape précédente)
+           
             function updatePriceField(priceSelectElement) {
                 const selectedOption = priceSelectElement.options[priceSelectElement.selectedIndex];
                 const prixStandard = selectedOption.dataset.prixStandard;
@@ -145,12 +144,11 @@
             }
 
 
-            // Attacher l'écouteur au bouton "Ajouter un Prix/Offre"
             if (addFormButton) {
                 addFormButton.addEventListener('click', addFormToCollection);
             }
 
-            // Attacher les écouteurs aux boutons "Supprimer" et listes déroulantes existants au chargement
+            
             collectionHolder.querySelectorAll('.remove-prix-offre').forEach(addRemoveButtonListener);
             collectionHolder.querySelectorAll('.prix-offre-evenement-offre-select').forEach(attachPriceChangeListener);
         });

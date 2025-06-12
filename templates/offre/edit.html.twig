@@ -1,0 +1,18 @@
+{% extends 'admin/index.html.twig' %}
+
+{% block title %}Modifier une Offre{% endblock %} {# CHANGÉ : Titre de la page dans l'onglet du navigateur #}
+
+{% block body_content %} {# Assurez-vous que le contenu est bien dans ce bloc #}
+
+    <h1>Modifier une Offre</h1> {# CHANGÉ : Le titre principal de la page #}
+
+    
+    {{ include('offre/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+
+    
+    <a href="{{ path('app_offre_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a> {# CHANGÉ : Texte et classe #}
+
+   
+    {{ include('offre/_delete_form.html.twig') }}
+
+{% endblock %}

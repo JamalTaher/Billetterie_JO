@@ -1,0 +1,41 @@
+{# templates/admin/dashboard.html.twig #}
+{% extends 'admin/index.html.twig' %} {# Extension de votre layout principal d'administration #}
+
+{% block title %}Tableau de bord Administration{% endblock %}
+
+{% block body_content %} {# Assurez-vous que c'est le bon nom de bloc pour votre layout #}
+    <h1>Tableau de bord de l'Administration</h1>
+
+    <p>Bienvenue dans l'interface d'administration. Utilisez les liens ci-dessous pour gérer les différentes sections de votre application.</p>
+
+    <div class="row mt-4">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Gestion des Événements</h5>
+                    <p class="card-text">Créer, modifier et supprimer les événements, et gérer leurs catégories.</p>
+                    <a href="{{ path('admin_select_category') }}" class="btn btn-primary">Gérer les Événements</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Gestion des Offres (Types de Billets)</h5>
+                    <p class="card-text">Définir les différents types de billets (Solo, Duo, Famille) et leurs prix standards.</p>
+                    <a href="{{ path('app_offre_index') }}" class="btn btn-primary">Gérer les Offres</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Statistiques des Ventes</h5>
+                    <p class="card-text">Consulter les rapports de ventes et autres statistiques de l'application.</p>
+                    <a href="{{ path('admin_stats_index') }}" class="btn btn-primary">Voir les Statistiques</a>
+                </div>
+            </div>
+        </div>
+       
+    </div>
+{% endblock %}

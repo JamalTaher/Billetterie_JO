@@ -1,0 +1,40 @@
+{% extends 'admin/index.html.twig' %}
+
+{# CHANGEMENT ICI : 'body' devient 'body_content' #}
+{% block body_content %} 
+    <h1>Gestion des offres</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Description</th>
+                <th>Capacite</th>
+                <th>PrixStandard</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for offre in offres %}
+            <tr>
+                <td>{{ offre.id }}</td>
+                <td>{{ offre.nom }}</td>
+                <td>{{ offre.description }}</td>
+                <td>{{ offre.capacite }}</td>
+                <td>{{ offre.prixStandard }}</td>
+                <td>
+                    <a href="{{ path('app_offre_show', {'id': offre.id}) }}">Consulter</a>
+                    <a href="{{ path('app_offre_edit', {'id': offre.id}) }}">Editer</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_offre_new') }}">Creer une nouvelle offre</a>
+{% endblock %}

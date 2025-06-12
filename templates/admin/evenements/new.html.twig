@@ -1,87 +1,116 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/index.html.twig' %}
 
 {% block title %}Créer un nouvel événement{% endblock %}
 
-{% block body %}
-    <div class="container mt-4">
-        <h1>Créer un nouvel événement</h1>
+{% block body_content %}
+    <h1>Créer un nouvel événement</h1>
 
-        {{ form_start(form) }}
-            {{ form_row(form.nom) }}
-            {{ form_row(form.categorie) }}
-            {{ form_row(form.date) }}
-            {{ form_row(form.lieu) }}
-            {{ form_row(form.description) }}
+    {{ form_start(form) }}
+        {{ form_row(form.nom) }}
+        {{ form_row(form.categorie) }}
+       
+        {{ form_row(form.dateHeure) }}
+        {{ form_row(form.lieu) }}
+        {{ form_row(form.description) }}
 
-            <h2>Prix et Offres</h2>
-            <ul class="prix-offres" data-prototype="{{ form_widget(form.prixOffreEvenements.vars.prototype)|e('html_attr') }}">
-                {% for prixOffreEvenementForm in form.prixOffreEvenements %}
-                    <li>
-                        {{ form_row(prixOffreEvenementForm.offre) }}
-                        {{ form_row(prixOffreEvenementForm.prix) }}
-                        <button type="button" class="btn btn-danger btn-sm remove-prix-offre">Supprimer</button>
-                    </li>
-                {% endfor %}
-            </ul>
-            {{ form_errors(form.prixOffreEvenements) }}
+        <h2>Prix et Offres</h2>
+        
+        <ul class="prix-offres"
+            data-prototype="{{ form_widget(form.prixOffreEvenements.vars.prototype)|e('html_attr') }}"
+            data-index="{{ form.prixOffreEvenements|length > 0 ? form.prixOffreEvenements|last.vars.name + 1 : 0 }}">
+            {% for prixOffreEvenement in form.prixOffreEvenements %}
+                <li>
+                    {{ form_row(prixOffreEvenement.offre) }}
+                    {{ form_row(prixOffreEvenement.prix) }}
+                    <button type="button" class="btn btn-danger btn-sm remove-collection-widget">Supprimer</button>
+                </li>
+            {% endfor %}
+        </ul>
+        <button type="button" class="btn btn-primary add-collection-widget" data-list-selector=".prix-offres">Ajouter un Prix/Offre</button>
 
-            <div class="mt-3">
-                <button type="button" class="btn btn-info mr-2" id="add-prix-offre" data-list=".prix-offres">Ajouter un Prix/Offre</button>
-                <button type="submit" class="btn btn-primary" id="create-event">Créer l'événement</button>
-            </div>
+        <button type="submit" class="btn btn-success mt-3">Créer l'événement</button>
+    {{ form_end(form) }}
 
-        {{ form_end(form) }}
+    <a href="{{ path('admin_evenements_list') }}" class="btn btn-secondary mt-3">Retour à la liste des événements</a>
 
-        <a href="{{ path('admin_select_category') }}" class="btn btn-secondary mt-3">Retour à la liste des événements</a>
-    </div>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const addPrixOffreButton = document.getElementById('add-prix-offre');
-            const prixOffresList = document.querySelector('.prix-offres');
+            const addTagFormDeleteLink = (item) => {
+                const removeFormButton = item.querySelector('.remove-collection-widget');
+                if (removeFormButton) {
+                    removeFormButton.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        item.remove(); // Supprime l'élément (li) parent
+                    });
+                }
+            };
 
-            prixOffresList.querySelectorAll('.remove-prix-offre').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    this.closest('li').remove();
-                });
-            });
+            const addFormToCollection = (e) => {
+                const collectionHolder = document.querySelector(e.currentTarget.dataset.listSelector);
+                const item = document.createElement('li'); // Crée un nouvel élément li pour chaque offre
 
-            addPrixOffreButton.addEventListener('click', function() {
-                const prototype = prixOffresList.dataset.prototype;
-                const index = prixOffresList.children.length;
-                const newForm = prototype.replace(/__name__/g, index);
-                const newLi = document.createElement('li');
-                newLi.innerHTML = newForm + ' <button type="button" class="btn btn-danger btn-sm remove-prix-offre">Supprimer</button>';
-                prixOffresList.appendChild(newLi);
-                newLi.querySelector('.remove-prix-offre').addEventListener('click', function() {
-                    this.closest('li').remove();
-                });
+                item.innerHTML = collectionHolder.dataset.prototype.replace(
+                    /__name__/g,
+                    collectionHolder.dataset.index
+                );
+
+                collectionHolder.appendChild(item);
+                collectionHolder.dataset.index = parseInt(collectionHolder.dataset.index) + 1;
+
+                addTagFormDeleteLink(item); // Ajoute le bouton de suppression au nouvel élément
+
+               
+                const offreSelect = item.querySelector('select[id$="_offre"]');
+                const prixInput = item.querySelector('input[id$="_prix"]');
+
+                if (offreSelect && prixInput) {
+                    
+                    const updatePrix = () => {
+                        const selectedOption = offreSelect.options[offreSelect.selectedIndex];
+                        const prixStandard = selectedOption ? selectedOption.dataset.prixStandard : '';
+                        
+                       
+                        if (prixInput.value === '') {
+                             prixInput.value = prixStandard;
+                        }
+                    };
+
+                   
+                    offreSelect.addEventListener('change', updatePrix);
+
+                    
+                    updatePrix();
+                }
+            };
+
+            document
+                .querySelectorAll('.add-collection-widget')
+                .forEach(btn => btn.addEventListener("click", addFormToCollection));
+
+            document
+                .querySelectorAll('ul.prix-offres > li')
+                .forEach(addTagFormDeleteLink);
+
+        
+            document.querySelectorAll('ul.prix-offres > li').forEach(item => {
+                const offreSelect = item.querySelector('select[id$="_offre"]');
+                const prixInput = item.querySelector('input[id$="_prix"]');
+
+                if (offreSelect && prixInput) {
+                    const updatePrixInitial = () => {
+                        const selectedOption = offreSelect.options[offreSelect.selectedIndex];
+                        const prixStandard = selectedOption ? selectedOption.dataset.prixStandard : '';
+                        
+                      
+                        if (prixInput.value === '' || (prixInput.value == prixStandard && prixStandard !== '')) { // Comparaison lâche pour les nombres
+                             prixInput.value = prixStandard;
+                        }
+                    };
+                    offreSelect.addEventListener('change', updatePrixInitial);
+                    updatePrixInitial(); // Appeler une fois au chargement
+                }
             });
         });
     </script>
-{% endblock %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    <style>
-        #add-prix-offre, #create-event {
-            min-width: 150px; 
-            padding: 0.5rem 1rem; 
-            font-size: 1rem; 
-        }
-
-        #add-prix-offre {
-            background-color: #007bff; 
-            border-color: #007bff;
-            color: white;
-        }
-
-        #add-prix-offre:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
-        }
-    </style>
 {% endblock %}

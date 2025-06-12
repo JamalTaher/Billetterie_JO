@@ -1,0 +1,14 @@
+{% extends 'admin/index.html.twig' %}
+
+{% block title %}Créer une Offre{% endblock %} 
+
+{% block body_content %} {# Assurez-vous que le contenu est bien dans ce bloc #}
+
+    <h1>Créer une nouvelle Offre</h1> 
+
+    {{ include('offre/_form.html.twig') }} {# C'est ici que votre formulaire est inclus #}
+
+   
+    <a href="{{ path('app_offre_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a> {# CHANGÉ : Texte et classe #}
+
+{% endblock %}
